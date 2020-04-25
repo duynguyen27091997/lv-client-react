@@ -1,0 +1,72 @@
+import React from 'react';
+import { Modal} from "react-bootstrap";
+import './ModalRegister.scss'
+import PropTypes from 'prop-types';
+import useForm from "../../helpers/userForm";
+import validate from "../../validate/validateRegister";
+
+const ModalRegister = (props) => {
+    const stateSchema ={
+        email:'',
+        name:'',
+        tel:'',
+        password:'',
+        rePassword:''
+    };
+
+    const {handleChange,handleSubmit,values,errors} = useForm(stateSchema,submit,validate);
+
+    //close modal
+    const handleClose = () =>{
+        props.closeModal()
+    };
+
+    function submit(){
+
+    }
+
+    return (
+        <Modal show={props.showRegister} onHide={handleClose} id={'ModalRegister'}>
+            <Modal.Body className={'p-5'}>
+                <h4 className={'Title text-center pb-4'}>Đăng Ký</h4>
+                <form>
+                    <div className="form-group">
+                        <label htmlFor="">Email</label>
+                        <input type="email" value={values.email} name={'email'} onChange={handleChange}/>
+                        {errors.email && <small className={'text-danger'}>{errors.email}</small>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="">Name</label>
+                        <input type="text" name={'name'} value={values.name} onChange={handleChange}/>
+                        {errors.name && <small className={'text-danger'}>{errors.name}</small>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="">Số điện thoại</label>
+                        <input type="tel" name={'tel'} value={values.tel} onChange={handleChange}/>
+                        {errors.tel && <small className={'text-danger'}>{errors.tel}</small>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="">Password</label>
+                        <input type="password" name={'password'} value={values.password} onChange={handleChange}/>
+                        {errors.password && <small className={'text-danger'}>{errors.password}</small>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="">Nhập lại password</label>
+                        <input type="password" name={'rePassword'} value={values.rePassword} onChange={handleChange}/>
+                        {errors.rePassword && <small className={'text-danger'}>{errors.rePassword}</small>}
+                    </div>
+                    <div className="form-group pt-4">
+                        <button onClick={handleSubmit} className={'Button Button--full'}>Đăng ký</button>
+                    </div>
+                    <div className="form-group pt-3 text-center">
+                        <p>Đã có tài khoản ? <span className={'text-underline Link'} onClick={props.switchLogin}>Đăng Nhập</span></p>
+                    </div>
+                </form>
+            </Modal.Body>
+        </Modal>
+    );
+};
+ModalRegister.propsTypes = {
+    showRegister: PropTypes.bool
+};
+export default ModalRegister;
