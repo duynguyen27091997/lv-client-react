@@ -3,9 +3,6 @@ import Container from "react-bootstrap/Container";
 import {Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import './scss/Aside.scss'
-import EditorJavascript from "../components/lesson/EditorJavascript";
-import Tool from "../components/lesson/Tool";
-import Hint from "../components/common/Hint";
 import TestBar from "../components/aside/TestBar";
 import wrapperTool from "../components/hoc/wrapperTool";
 

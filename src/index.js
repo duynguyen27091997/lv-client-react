@@ -6,13 +6,22 @@ import "react-circular-progressbar/dist/styles.css";
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from "react-router-dom";
-import {createStore} from "redux";
+import {applyMiddleware, createStore} from "redux";
+import {composeWithDevTools} from 'redux-devtools-extension';
 import {Provider} from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
 import rootReducer from "./reducer/rootReducer";
-const store = createStore(rootReducer);
+
+const store = createStore(rootReducer,
+    composeWithDevTools(
+        applyMiddleware(
+            thunkMiddleware, // lets us dispatch() functions
+        ))
+);
+
 ReactDOM.render(
     <Provider store={store}>
-    <BrowserRouter><App /></BrowserRouter>
+        <BrowserRouter><App/></BrowserRouter>
     </Provider>
     , document.getElementById('root'));
 
