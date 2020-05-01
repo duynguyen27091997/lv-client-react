@@ -1,24 +1,50 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Modal} from "react-bootstrap";
 import useForm from "../../helpers/userForm";
 import validate from "../../validate/validateLogin";
+import {login} from "../../actions/rootActions";
+import {useDispatch} from "react-redux";
+import swal from "sweetalert";
 
 const ModalLogin = (props) => {
-    const stateSchema ={
-      email:'',
-      password:''
+    let [resErr, setResErr] = useState('');
+    const stateSchema = {
+        email: '',
+        password: ''
     };
-    const {handleChange,handleSubmit,values,errors} = useForm(stateSchema,submit,validate);
+    const dispatch = useDispatch();
+    const {handleChange, handleSubmit, values, errors} = useForm(stateSchema, submit, validate);
     const handleClose = () => {
         props.closeModal()
     };
+
     function submit() {
-        console.log('submit');
+        dispatch(login({email: values.email, password: values.password}))
+            .then(({data: res}) => {
+                if (res.success) {
+                    swal({
+                        title: res.message,
+                        icon: "success",
+                        button: false,
+                        timer:1500
+                    }).then(r => r)
+                    handleClose()
+                } else {
+                    setResErr(res.message)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
+
     return (
         <Modal show={props.showLogin} onHide={handleClose} id={'ModalRegister'}>
             <Modal.Body className={'p-5'}>
                 <h4 className={'Title text-center pb-4'}>Đăng Nhập</h4>
+                {resErr && <div className="alert alert-danger" role="alert">
+                    {resErr}
+                </div>}
                 <form noValidate onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="">Email</label>

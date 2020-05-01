@@ -1,34 +1,64 @@
-import React from 'react';
-import { Modal} from "react-bootstrap";
+import React, {useState} from 'react';
+import {Modal} from "react-bootstrap";
 import './ModalRegister.scss'
 import PropTypes from 'prop-types';
 import useForm from "../../helpers/userForm";
 import validate from "../../validate/validateRegister";
+import {useDispatch} from "react-redux";
+import {signUp} from "../../actions/rootActions";
+import swal from "sweetalert";
 
 const ModalRegister = (props) => {
-    const stateSchema ={
-        email:'',
-        name:'',
-        tel:'',
-        password:'',
-        rePassword:''
+    let [resErr, setResErr] = useState('');
+    const stateSchema = {
+        email: '',
+        name: '',
+        tel: '',
+        password: '',
+        rePassword: ''
     };
-
-    const {handleChange,handleSubmit,values,errors} = useForm(stateSchema,submit,validate);
-
+    const {handleChange, handleSubmit, values, errors} = useForm(stateSchema, submit, validate);
+    const dispatch = useDispatch();
     //close modal
-    const handleClose = () =>{
+    const handleClose = () => {
         props.closeModal()
     };
 
-    function submit(){
-
+    function submit() {
+        let params = {
+            roleId: 3,
+            email: values.email,
+            username: values.name,
+            password: values.password,
+            mobile: values.tel,
+            countryId: 241
+        }
+        dispatch(signUp(params))
+            .then(({data: res}) => {
+                if (res.success) {
+                    swal({
+                        title: res.message,
+                        icon: "success",
+                        button: false,
+                        timer:1500
+                    }).then(r => r)
+                    handleClose()
+                } else {
+                    setResErr(res.message)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     return (
         <Modal show={props.showRegister} onHide={handleClose} id={'ModalRegister'}>
             <Modal.Body className={'p-5'}>
                 <h4 className={'Title text-center pb-4'}>Đăng Ký</h4>
+                {resErr && <div className="alert alert-danger" role="alert">
+                    {resErr}
+                </div>}
                 <form>
                     <div className="form-group">
                         <label htmlFor="">Email</label>
@@ -59,7 +89,8 @@ const ModalRegister = (props) => {
                         <button onClick={handleSubmit} className={'Button Button--full'}>Đăng ký</button>
                     </div>
                     <div className="form-group pt-3 text-center">
-                        <p>Đã có tài khoản ? <span className={'text-underline Link'} onClick={props.switchLogin}>Đăng Nhập</span></p>
+                        <p>Đã có tài khoản ? <span className={'text-underline Link'} onClick={props.switchLogin}>Đăng Nhập</span>
+                        </p>
                     </div>
                 </form>
             </Modal.Body>

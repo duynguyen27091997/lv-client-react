@@ -5,9 +5,12 @@ import './Header.scss';
 import Logo from '../assets/img/Logo.png'
 import ModalRegister from "../components/modal/ModalRegister";
 import ModalLogin from "../components/modal/ModalLogin";
+import {connect} from 'react-redux';
+import User from "../components/user/User";
 
 class Header extends Component {
     render() {
+        let {user} = this.props;
         return (
             <div className={'Header'}>
                 <Container>
@@ -20,11 +23,20 @@ class Header extends Component {
                                             <img height={60} className={'Header__logo'} src={Logo} alt=""/>
                                         </Link>
                                     </Navbar.Brand>
-                                    <button className={'Button text-uppercase'} onClick={()=> this.props.showLogin()}>
-                                        Bắt đầu ngay
-                                    </button>
-                                    <ModalRegister showRegister={this.props.register} closeModal={this.props.closeRegister} switchLogin={this.props.showLogin}/>
-                                    <ModalLogin showLogin={this.props.login} closeModal={this.props.closeLogin} switchRegister={this.props.showRegister}/>
+                                    {
+                                        user.username ?
+                                            <User user={user}/>
+                                             :
+                                            <button className={'Button text-uppercase'}
+                                                    onClick={() => this.props.showLogin()}>
+                                                Bắt đầu ngay
+                                            </button>
+                                    }
+                                    <ModalRegister showRegister={this.props.register}
+                                                   closeModal={this.props.closeRegister}
+                                                   switchLogin={this.props.showLogin}/>
+                                    <ModalLogin showLogin={this.props.login} closeModal={this.props.closeLogin}
+                                                switchRegister={this.props.showRegister}/>
                                 </div>
                             </Navbar>
                         </Col>
@@ -35,4 +47,10 @@ class Header extends Component {
     }
 }
 
-export default Header;
+function mapStateToProps(state, ownProps) {
+    return {
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps)(Header);
