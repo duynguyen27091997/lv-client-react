@@ -34,7 +34,7 @@ export const login = function (params) {
 export const signUp = function (params) {
     return dispatch => {
         return new Promise((resolve, reject) => {
-            AxiosBe.post('/api/signup', qs.stringify(params))
+            AxiosBe.post('/api/sign-up', qs.stringify(params))
                 .then(res => {
                     resolve(res)
                 })
