@@ -17,7 +17,7 @@ const ModalRegister = (props) => {
         password: '',
         rePassword: ''
     };
-    const {handleChange, handleSubmit, values, errors} = useForm(stateSchema, submit, validate);
+    const {handleChange, handleSubmit, values, errors, resetForm} = useForm(stateSchema, submit, validate);
     const dispatch = useDispatch();
     //close modal
     const handleClose = () => {
@@ -40,8 +40,9 @@ const ModalRegister = (props) => {
                         title: res.message,
                         icon: "success",
                         button: false,
-                        timer:1500
+                        timer: 1500
                     }).then(r => r)
+                    resetForm();
                     handleClose()
                 } else {
                     setResErr(res.message)

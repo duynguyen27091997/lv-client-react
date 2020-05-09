@@ -13,7 +13,7 @@ const ModalLogin = (props) => {
         password: ''
     };
     const dispatch = useDispatch();
-    const {handleChange, handleSubmit, values, errors} = useForm(stateSchema, submit, validate);
+    const {handleChange, handleSubmit, values, errors,resetForm} = useForm(stateSchema, submit, validate);
     const handleClose = () => {
         props.closeModal()
     };
@@ -28,6 +28,7 @@ const ModalLogin = (props) => {
                         button: false,
                         timer:1500
                     }).then(r => r)
+                    resetForm();
                     handleClose()
                 } else {
                     setResErr(res.message)

@@ -11,6 +11,12 @@ const useForm = (stateSchema, callback, validate) => {
             [name]: value
         })
     };
+
+    const resetForm = (e) => {
+        setValues(stateSchema);
+        setErrors(stateSchema);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsSubmit(true);
@@ -26,7 +32,8 @@ const useForm = (stateSchema, callback, validate) => {
         handleChange,
         handleSubmit,
         values,
-        errors
+        errors,
+        resetForm
     }
 };
 export default useForm;
