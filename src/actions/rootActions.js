@@ -21,7 +21,8 @@ export const login = function (params) {
         return new Promise((resolve, reject) => {
             AxiosBe.post('/api/login', qs.stringify(params))
                 .then(res => {
-                    dispatch(setAuth(res.data.data.user))
+                    if (res.data.data && res.data.data.user)
+                        dispatch(setAuth(res.data.data.user))
                     resolve(res)
                 })
                 .catch(err => {
