@@ -59,13 +59,13 @@ class Home extends Component {
                 <div className={'Home__Info my-5'}>
                     <Container>
                         <Row>
+                            <div className={'card-deck'}>
                             {
                                 this.state.list.map((article,index) => {
-                                    return <Col key={index} xs={3} className={'p-2'} onClick={() => this.props.showLogin()}>
-                                        <ArticleIntro article={article}/>
-                                    </Col>
+                                    return <ArticleIntro article={article} key={index} onClick={() => this.props.showLogin()}/>
                                 })
                             }
+                            </div>
                         </Row>
                     </Container>
                 </div>

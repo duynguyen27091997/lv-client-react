@@ -1,6 +1,7 @@
 .CardCourse{
   transition: transform .5s;
   cursor: pointer;
+  margin-bottom: 15px;
   a{
     color: #20232a;
     font-size: 22px;
@@ -31,4 +32,7 @@
   &__img{
     height: 200px;
   }
+}
+.card-body{
+  border-top: 1px solid #eaeaea;
 }

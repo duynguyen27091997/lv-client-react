@@ -13,7 +13,7 @@ export let LOG_OUT = 'LOG_OUT';
 export const logOut = function () {
     return {
         type: LOG_OUT,
-        res: {}
+        res: null
     }
 }
 export const login = function (params) {

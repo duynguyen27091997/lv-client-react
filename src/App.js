@@ -2,11 +2,16 @@ import React, {useState} from 'react';
 import Header from './partials/Header';
 import routes from "./routes";
 import './App.css';
-import {Switch} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import Footer from "./partials/Footer";
 import RouteWithSubRoutes from "./components/common/RouteWithSubRoutes";
+import Startup from "./components/Startup";
+import {useSelector} from "react-redux";
+import {withRouter} from "react-router-dom";
+import Home from "./pages/Home";
 
-function App() {
+function App(props) {
+    const user = useSelector(state => state.main.user);
     const [showLogin,setShowLogin]  = useState(false);
     const [showRegister,setShowRegister]  = useState(false);
     function handleCloseModalLogin(){
@@ -16,24 +21,33 @@ function App() {
         setShowRegister(false);
     }
     function handleShowLogin() {
-        setShowLogin(true);
-        setShowRegister(false);
+        if (!user){
+            setShowLogin(true);
+            setShowRegister(false);
+        }else{
+            props.history.push('/courses')
+        }
     }
 
     function handleShowRegister() {
-        setShowLogin(false);
-        setShowRegister(true);
+        if (!user){
+            setShowLogin(false);
+            setShowRegister(true);
+        }else{
+
+        }
     }
     const routeComponents = routes.map((route, key) => <RouteWithSubRoutes showLogin={handleShowLogin} {...route} key={key} />);
     return (
-        <div className="App">
+        <Startup className="App">
             <Header login={showLogin} register={showRegister} closeLogin={handleCloseModalLogin} closeRegister={handleCloseModalRegister} showLogin={handleShowLogin} showRegister={handleShowRegister}/>
             <Switch>
                 {routeComponents}
+                <Route path={'/'} component={()=><Home showLogin={handleShowLogin}/>}/>
             </Switch>
             <Footer/>
-        </div>
+        </Startup>
     );
 }
 
-export default App;
+export default withRouter(App);

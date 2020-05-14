@@ -4,7 +4,7 @@ import './ArticleIntro.scss'
 class ArticleIntro extends Component{
     render() {
         return (
-            <Card className={'ArticleIntro'}>
+            <Card className={'ArticleIntro'} onClick={this.props.onClick}>
                 <Card.Img variant="top" src={this.props.article.img} />
                 <Card.Body>
                     <Card.Title>{this.props.article.title}</Card.Title>

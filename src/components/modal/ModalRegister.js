@@ -43,6 +43,7 @@ const ModalRegister = (props) => {
                         timer: 1500
                     }).then(r => r)
                     resetForm();
+                    setResErr('')
                     handleClose()
                 } else {
                     setResErr(res.message)

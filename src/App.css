@@ -16,7 +16,7 @@
 }
 .Content{
     margin-top: 60px;
-    min-height: calc(100vh - 100px);
+    min-height: 100vh;
 }
 .Title{
     font-size: 1.7rem;
