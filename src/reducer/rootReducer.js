@@ -1,7 +1,7 @@
 import {LOG_OUT, SET_AUTH} from "../actions/rootActions";
 
 let initialState = {
-    user: {}
+    user: null
 };
 
 const rootReducer = (state = initialState, action) => {

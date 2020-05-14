@@ -28,6 +28,18 @@ const ModalLogin = (props) => {
                         button: false,
                         timer:1500
                     }).then(r => r)
+                    try {
+                        let {token} = res.data.user;
+                        localStorage.setItem('token', token)
+                    }
+                    catch (e) {
+                        swal({
+                            title: "Có lỗi xảy ra trong quá trình login",
+                            icon: "error",
+                            button: false,
+                            timer:1500
+                        }).then(r => r)
+                    }
                     resetForm();
                     handleClose()
                 } else {

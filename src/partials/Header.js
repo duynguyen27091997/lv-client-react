@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Container, Navbar, Row, Col} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import './Header.scss';
-import Logo from '../assets/img/Logo.png'
+import Logo from '../assets/img/logo_transparent.png'
 import ModalRegister from "../components/modal/ModalRegister";
 import ModalLogin from "../components/modal/ModalLogin";
 import {connect} from 'react-redux';
@@ -24,9 +24,17 @@ class Header extends Component {
                                         </Link>
                                     </Navbar.Brand>
                                     {
-                                        user.username ?
+                                        user ?
+                                            <div className={"Header__list"}>
+                                                <Link to={'/courses'}>Khoá học</Link>
+                                            </div>
+                                            :
+                                            null
+                                    }
+                                    {
+                                        user ?
                                             <User user={user}/>
-                                             :
+                                            :
                                             <button className={'Button text-uppercase'}
                                                     onClick={() => this.props.showLogin()}>
                                                 Bắt đầu ngay
@@ -49,7 +57,7 @@ class Header extends Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        user: state.user
+        user: state.main.user
     }
 }
 

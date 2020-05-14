@@ -1,4 +1,3 @@
-import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import Lesson from "./pages/Lesson";
 import Exercise from "./pages/Exercise";
@@ -21,13 +20,5 @@ const routes = [
         path: '/test',
         component: Test,
     },
-    {
-        path: '/',
-        component: Home,
-//     path: '/Teachers/:teacherId',
-//     component: TeacherPage,
-// }, {
-//     path: '/Teachers/:teacherId/Classes',
-//     component: TaughtClassesPage,
-    }, /* And so on. */];
+];
 export default routes

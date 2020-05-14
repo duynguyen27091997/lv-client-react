@@ -1,7 +1,15 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CircleProcess from "../common/CircleProcess";
+import {useSelector} from "react-redux";
 
-const ExerciseBar = () => {
+const ExerciseBar = ({changeQuiz}) => {
+    const exercises = useSelector(state => state.course.exercises);
+    const [listObject, setListObject] = useState([]);
+
+    useEffect(_ => {
+        setListObject(new Set(exercises.map(item => item.levelId)))
+        changeQuiz(exercises[0])
+    }, [changeQuiz, exercises])
     return (
         <div className={'Aside__Tab'}>
             <div className={'Aside__Process'}>
@@ -9,34 +17,18 @@ const ExerciseBar = () => {
             </div>
             <div className={'Aside__List'}>
                 <div className={'text-left'}>
-                    <div>
-                        <div className={'btn btn-primary'}>Bài 1</div>
-                        <ul>
-                            <li className={'badge badge-success'}>Câu 1</li>
-                            <li className={'badge badge-secondary'}>Câu 2</li>
-                            <li className={'badge badge-secondary'}>Câu 3</li>
-                            <li className={'badge badge-secondary'}>Câu 4</li>
-                            <li className={'badge badge-secondary'}>Câu 5</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <div className={'btn btn-primary'}>Bài 2</div>
-                    </div>
-                    <div>
-                        <div className={'btn btn-primary disabled'}>Bài 3</div>
-                    </div>
-                    <div>
-                        <div className={'btn btn-primary'}>Bài 4</div>
-                    </div>
-                    <div>
-                        <div className={'btn btn-primary'}>Bài 5</div>
-                    </div>
-                    <div>
-                        <div className={'btn btn-primary'}>Bài 6</div>
-                    </div>
-                    <div>
-                        <div className={'btn btn-primary'}>Bài 7</div>
-                    </div>
+                    {
+                        Array.from(listObject).map(level =>
+                            <div key={level} className={"object mb-3"}>
+                                <div className={'btn btn-primary'}>Bài {level}</div>
+                                <ul>
+                                    {
+                                        (exercises.filter(quiz => quiz.levelId === level)).map(quiz =>
+                                            <li className={'badge badge-secondary'} key={quiz.id}>{quiz.title}</li>)
+                                    }
+                                </ul>
+                            </div>)
+                    }
                 </div>
             </div>
         </div>

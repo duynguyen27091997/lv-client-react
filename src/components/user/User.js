@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {logOut} from "../../actions/rootActions";
-
+import swal from 'sweetalert';
 class User extends Component {
     constructor(props) {
         super(props);
@@ -35,9 +35,14 @@ class User extends Component {
 
     handleLogout() {
         this.props.dispatch(logOut());
+        localStorage.removeItem('token');
+        swal({
+            title:'Bạn đã đăng xuất khỏi tài khoản',
+            icon:'error'
+        }).then(r =>r)
     }
 
-    render() {
+    render()  {
         let {user} = this.props;
         return (
             <div className={'user'}>
