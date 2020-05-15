@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Variables from "../common/Variables";
+import Variables from "./Variables";
 
 class Tool extends Component {
 
