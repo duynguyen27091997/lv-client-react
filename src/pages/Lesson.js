@@ -4,7 +4,7 @@ import {Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import './scss/Aside.scss'
 import Editor from "../editor/Editor";
-import Tool from "../components/lesson/Tool";
+import Tool from "../components/common/Tool";
 import LessonBar from "../components/aside/LessonBar";
 import Hint from "../components/common/Hint";
 import {Redirect} from "react-router-dom";
@@ -12,26 +12,79 @@ import wrapperTool from "../components/hoc/wrapperTool";
 import {useDispatch, useSelector} from "react-redux";
 import {AxiosBe} from "../utils/axios";
 import {setLessons} from "../actions/courseActions";
+import swal from "sweetalert";
+import qs from 'querystring';
 
 const Lesson = () => {
+
+    const user = useSelector(state => state.main.user);
     const course = useSelector(state => state.course.course);
     const lessons = useSelector(state => state.course.lessons);
+
+    const [code,setCode] = useState('')
+    const [answer,setAnswer] = useState('')
+    const [quiz, setQuiz] = useState(null);
+
     const dispatch = useDispatch();
-    const [quiz,setQuiz] = useState(null);
 
     useEffect(_ => {
         if (course && !lessons)
-            AxiosBe.get(`/api/lesson?courseId=${course.id}`)
-                .then(({data:res}) => {
+            AxiosBe.get(`/api/lesson?courseId=${course.id}&userId=${user.id}`)
+                .then(({data: res}) => {
                     dispatch(setLessons(res.data))
                 })
                 .catch(err => {
                     dispatch(setLessons([]))
                 })
-    }, [course, dispatch, lessons])
-    const changeCode = (code)=>{
+    }, [course, dispatch, lessons, user.id])
+
+    const handleSubmit = (e)=>{
+        e.preventDefault();
         console.log(code)
-    }   
+        if (!answer){
+            swal({
+                title: "Đáp án không được để trống",
+                icon: 'error',
+                timer: 1500,
+                button:false
+            }).then(r  =>r)
+        }else{
+            let payload = {
+                id:quiz.id,
+                result:answer,
+                code:code,
+                keyName:2,
+                doTime:1
+            }
+            AxiosBe.post(`/api/submit/${user.id}`,qs.stringify(payload))
+                .then(({data: res}) => {
+                    if (res.success){
+                        swal({
+                            title: res.message,
+                            icon: 'success',
+                            timer: 1500,
+                            button:false
+                        }).then(r  =>r)
+                    }else{
+                        swal({
+                            title: res.message,
+                            icon: 'error',
+                            timer: 1500,
+                            button:false
+                        }).then(r  =>r)
+                    }
+                })
+                .catch(err => {
+                    swal({
+                        title: "Có lỗi xảy ra  trong quá trình xử lí",
+                        icon: 'error',
+                        timer: 1500,
+                        button:false
+                    }).then(r  =>r)
+                })
+        }
+    }
+
     if (course) {
         return (
             <Container fluid={true} className={'Content'}>
@@ -39,7 +92,7 @@ const Lesson = () => {
                     lessons ?
                         <Row>
                             <Col className={'Aside__Tool'} xs={3}>
-                                <LessonBar changeQuiz={(quiz)=>setQuiz(quiz)}/>
+                                <LessonBar current={quiz} changeQuiz={(quiz) => setQuiz(quiz)}/>
                             </Col>
                             <Col xs={3}/>
                             <Col xs={6} className={'p-4'}>
@@ -47,26 +100,21 @@ const Lesson = () => {
                                     quiz ?
                                         <section>
                                             <h4 className={'Title mb-4'}>{quiz.question}</h4>
-                                            <Editor type={course['LanguageChallenges'][0]['title']} change={(code) =>changeCode(code)}/>
-                                            {/*<div className={'Code__Result text-left mt-4'}>*/}
-                                            {/*    <div className="alert alert-success" role="alert">*/}
-                                            {/*        This is a success alert—check it out!*/}
-                                            {/*    </div>*/}
-                                            {/*    <div className="alert alert-danger" role="alert">*/}
-                                            {/*        This is a danger alert—check it out!*/}
-                                            {/*    </div>*/}
-                                            {/*    <div className="alert alert-warning" role="alert">*/}
-                                            {/*        This is a warning alert—check it out!*/}
-                                            {/*    </div>*/}
-                                            {/*</div>*/}
+                                            <Editor readOnly={true} code={quiz.code}
+                                                    type={course['LanguageChallenges'][0]['title']}
+                                                    change={(code) => setCode(code)}/>
+
                                             <form action="" className={'py-5'}>
                                                 <div className={'d-flex w-100 justify-content-between'}>
-                                                    <input type="text" style={{flex: '0 0 68%'}}/>
-                                                    <button className={'Button'} style={{flex: '0 0 30%'}}>Kiểm tra</button>
+                                                    <input value={answer} onChange={(e) =>setAnswer(e.target.value)} type="text" style={{flex: '0 0 68%'}}/>
+                                                    <button onClick={handleSubmit} className={'Button'} style={{flex: '0 0 30%'}}>Kiểm tra
+                                                    </button>
                                                 </div>
                                             </form>
                                             <div>
-                                                <Hint tutorial={quiz.tutorial}/>
+                                                {
+                                                    quiz.tutorial && <Hint tutorial={quiz.tutorial}/>
+                                                }
                                             </div>
                                         </section>
                                         :
