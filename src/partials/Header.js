@@ -17,10 +17,10 @@ class Header extends Component {
                     <Row>
                         <Col>
                             <Navbar className={' p-0'}>
-                                <div className={'d-flex justify-content-between w-100 align-items-center'}>
+                                <div className={'d-flex justify-content-between w-100 align-items-center'} style={{height:'60px'}}>
                                     <Navbar.Brand className={'p-0'}>
                                         <Link to={'/'}>
-                                            <img height={60} className={'Header__logo'} src={Logo} alt=""/>
+                                            <img height={50} className={'Header__logo'} src={Logo} alt=""/>
                                         </Link>
                                     </Navbar.Brand>
                                     {

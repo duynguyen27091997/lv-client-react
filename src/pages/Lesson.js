@@ -11,7 +11,7 @@ import {Redirect} from "react-router-dom";
 import wrapperTool from "../components/hoc/wrapperTool";
 import {useDispatch, useSelector} from "react-redux";
 import {AxiosBe} from "../utils/axios";
-import {setLessons} from "../actions/courseActions";
+import {answerLesson, setLessons} from "../actions/courseActions";
 import swal from "sweetalert";
 import qs from 'querystring';
 
@@ -21,8 +21,8 @@ const Lesson = () => {
     const course = useSelector(state => state.course.course);
     const lessons = useSelector(state => state.course.lessons);
 
-    const [code,setCode] = useState('')
-    const [answer,setAnswer] = useState('')
+    const [code, setCode] = useState('')
+    const [answer, setAnswer] = useState('')
     const [quiz, setQuiz] = useState(null);
 
     const dispatch = useDispatch();
@@ -31,58 +31,78 @@ const Lesson = () => {
         if (course && !lessons)
             AxiosBe.get(`/api/lesson?courseId=${course.id}&userId=${user.id}`)
                 .then(({data: res}) => {
-                    dispatch(setLessons(res.data))
+                    const lessons = res.data.sort((a, b) => {
+                        if (a.levelId === b.levelId){
+                           return a.sequenceNumber - b.sequenceNumber
+                        }
+                        return a.levelId - b.levelId
+                    })
+                    dispatch(setLessons(lessons))
                 })
                 .catch(err => {
                     dispatch(setLessons([]))
                 })
     }, [course, dispatch, lessons, user.id])
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(code)
-        if (!answer){
+        if (!answer) {
             swal({
                 title: "Đáp án không được để trống",
                 icon: 'error',
                 timer: 1500,
-                button:false
-            }).then(r  =>r)
-        }else{
+                button: false
+            }).then(r => r)
+        } else {
             let payload = {
-                id:quiz.id,
-                result:answer,
-                code:code,
-                keyName:2,
-                doTime:1
+                id: quiz.id,
+                result: answer,
+                code: code,
+                keyName: 2,
+                doTime: 1
             }
-            AxiosBe.post(`/api/submit/${user.id}`,qs.stringify(payload))
+            AxiosBe.post(`/api/submit/${user.id}`, qs.stringify(payload))
                 .then(({data: res}) => {
-                    if (res.success){
+                    if (res.success) {
                         swal({
                             title: res.message,
                             icon: 'success',
                             timer: 1500,
-                            button:false
-                        }).then(r  =>r)
-                    }else{
+                            button: false
+                        }).then(r => r)
+                        AxiosBe.get(`/api/lesson?courseId=${course.id}&userId=${user.id}`)
+                            .then(({data: res}) => {
+                                const lessons = res.data.sort((a, b) => {
+                                    if (a.levelId === b.levelId){
+                                        return a.sequenceNumber - b.sequenceNumber
+                                    }
+                                    return a.levelId - b.levelId
+                                })
+                                dispatch(setLessons(lessons))
+                            })
+                            .catch(err => {
+                                dispatch(setLessons([]))
+                            })
+                    } else {
                         swal({
                             title: res.message,
                             icon: 'error',
                             timer: 1500,
-                            button:false
-                        }).then(r  =>r)
+                            button: false
+                        }).then(r => r)
                     }
                 })
                 .catch(err => {
+                    console.log(err)
                     swal({
                         title: "Có lỗi xảy ra  trong quá trình xử lí",
                         icon: 'error',
                         timer: 1500,
-                        button:false
-                    }).then(r  =>r)
+                        button: false
+                    }).then(r => r)
                 })
         }
+        setAnswer('')
     }
 
     if (course) {
@@ -104,13 +124,15 @@ const Lesson = () => {
                                                     type={course['LanguageChallenges'][0]['title']}
                                                     change={(code) => setCode(code)}/>
 
-                                            <form action="" className={'py-5'}>
+                                            <div className={'py-5'}>
                                                 <div className={'d-flex w-100 justify-content-between'}>
-                                                    <input value={answer} onChange={(e) =>setAnswer(e.target.value)} type="text" style={{flex: '0 0 68%'}}/>
-                                                    <button onClick={handleSubmit} className={'Button'} style={{flex: '0 0 30%'}}>Kiểm tra
+                                                    <input value={answer} onChange={(e) => setAnswer(e.target.value)}
+                                                           type="text" style={{flex: '0 0 68%'}}/>
+                                                    <button onClick={handleSubmit} className={'Button'}
+                                                            style={{flex: '0 0 30%'}}>Kiểm tra
                                                     </button>
                                                 </div>
-                                            </form>
+                                            </div>
                                             <div>
                                                 {
                                                     quiz.tutorial && <Hint tutorial={quiz.tutorial}/>
