@@ -14,8 +14,10 @@ import {setExercises} from "../actions/courseActions";
 import ResultCoding from "../components/common/ResultCoding";
 
 const Exercise = () => {
+    const user = useSelector(state => state.main.user);
     const course = useSelector(state => state.course.course);
     const exercises = useSelector(state => state.course.exercises);
+
     const dispatch = useDispatch();
 
     const [code,setCode] = useState('')
@@ -23,14 +25,20 @@ const Exercise = () => {
 
     useEffect(_ => {
         if (course && !exercises)
-            AxiosBe.get(`/api/coding?courseId=${course.id}`)
-                .then(({data:res}) => {
-                    dispatch(setExercises(res.data))
+            AxiosBe.get(`/api/coding?courseId=${course.id}&userId=${user.id}`)
+                .then(({data: res}) => {
+                    const exercises = res.data.sort((a, b) => {
+                        if (a.levelId === b.levelId){
+                            return a.sequenceNumber - b.sequenceNumber
+                        }
+                        return a.levelId - b.levelId
+                    })
+                    dispatch(setExercises(exercises))
                 })
                 .catch(err => {
                     dispatch(setExercises([]))
                 })
-    }, [course, dispatch, exercises])
+    }, [course, dispatch, exercises, user.id])
 
     const handleSubmit = (e)=>{
         e.preventDefault();
