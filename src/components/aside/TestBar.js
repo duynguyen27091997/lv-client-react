@@ -10,7 +10,7 @@ const TestBar = (props) => {
             <p className={'mb-1'}>Điểm gần đây nhất của bạn 1/8</p>
             <p className={'mb-1'}>Điểm cao nhất đạt được 6/8</p>
             <p className={'mb-1'}>Số lần thực hiện 2</p>
-            <button onClick={startTest} className={'Button mt-4'}>Làm bài kiểm tra</button>
+            {!props.assessment &&<button onClick={startTest} className={'Button mt-4'}>Làm bài kiểm tra</button>}
         </div>
     );
 };

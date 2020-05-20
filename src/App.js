@@ -9,6 +9,7 @@ import Startup from "./components/Startup";
 import {useSelector} from "react-redux";
 import {withRouter} from "react-router-dom";
 import Home from "./pages/Home";
+import ActiveEmail from "./pages/ActiveEmail";
 
 function App(props) {
     const user = useSelector(state => state.main.user);
@@ -43,6 +44,7 @@ function App(props) {
             <Header login={showLogin} register={showRegister} closeLogin={handleCloseModalLogin} closeRegister={handleCloseModalRegister} showLogin={handleShowLogin} showRegister={handleShowRegister}/>
             <Switch>
                 {routeComponents}
+                <Route path={'/active'} component={()=><ActiveEmail showLogin={handleShowLogin}/>}/>
                 <Route path={'/'} component={()=><Home showLogin={handleShowLogin}/>}/>
             </Switch>
             <Footer/>

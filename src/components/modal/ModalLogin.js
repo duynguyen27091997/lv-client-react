@@ -26,7 +26,7 @@ const ModalLogin = (props) => {
                         title: res.message,
                         icon: "success",
                         button: false,
-                        timer:1500
+                        // timer:1500
                     }).then(r => r)
                     try {
                         let {token} = res.data.user;
