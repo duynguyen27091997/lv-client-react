@@ -12,7 +12,7 @@ const LessonBar = ({current, changeQuiz}) => {
 
     useEffect(_ => {
         let listQuizPass = lessons.filter(quiz => quiz.members.length);
-        setProcess(Math.round(listQuizPass.length / lessons.length * 100))
+        setProcess(Math.round(listQuizPass.length / lessons.length * 100) || 0)
         if (listQuizPass.length < lessons.length) {
             setCurrentQuiz(lessons[listQuizPass.length])
             changeQuiz(lessons[listQuizPass.length])
@@ -74,7 +74,7 @@ const LessonBar = ({current, changeQuiz}) => {
                                                                        className={'badge badge-info'}
                                                                        key={quiz.id}>{quiz.title}</li>
                                                         } else
-                                                            return <li onClick={() => changeQuiz(quiz)}
+                                                            return <li onClick={() => handleReject()}
                                                                        className={'badge badge-secondary'}
                                                                        key={quiz.id}>{quiz.title}</li>
                                                     }

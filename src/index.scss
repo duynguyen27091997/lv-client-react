@@ -63,3 +63,52 @@ input{
 .object-exercise .badge-secondary{
   opacity: 1;
 }
+.box-active{
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+  background: #2980b9;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  h4{
+    font-size: 24px;
+
+  }
+  p{
+    font-size: 18px;
+  }
+  .button-active{
+    padding: 15px 50px;
+    cursor: pointer;
+    background: #ffffff;
+    color: #2980b9;
+    margin-top: 20px;
+    font-size: 20px;
+    text-transform: uppercase;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+  }
+}
+.modal-300w{
+  width: 300px!important;
+  max-width: unset!important;
+}
+.title {
+  position: relative;
+  font-weight: 700;
+  font-size: 22px;
+  padding: 10px 0;
+  margin-bottom: 45px;
+  &:after {
+    content: "";
+    position: absolute;
+    height: 3px;
+    background: #5d78ff;
+    width: 100px;
+    bottom: 0;
+    left: 0;
+  }
+}

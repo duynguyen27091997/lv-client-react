@@ -11,7 +11,7 @@ import {Redirect} from "react-router-dom";
 import wrapperTool from "../components/hoc/wrapperTool";
 import {useDispatch, useSelector} from "react-redux";
 import {AxiosBe} from "../utils/axios";
-import {answerLesson, setLessons} from "../actions/courseActions";
+import { setLessons} from "../actions/courseActions";
 import swal from "sweetalert";
 import qs from 'querystring';
 
