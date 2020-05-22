@@ -119,7 +119,8 @@ const Lesson = () => {
                                 {
                                     quiz ?
                                         <section>
-                                            <h4 className={'Title mb-4'}>{quiz.question}</h4>
+                                            <h4 className={'Title '}>{quiz.title}</h4>
+                                            <h5 className={'mb-4'}>{quiz.question}</h5>
                                             <Editor readOnly={true} code={quiz.code}
                                                     type={course['LanguageChallenges'][0]['title']}
                                                     change={(code) => setCode(code)}/>

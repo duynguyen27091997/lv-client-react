@@ -12,6 +12,8 @@ import Editor from "../editor/Editor";
 import {AxiosBe} from "../utils/axios";
 import {setExercises} from "../actions/courseActions";
 import ResultCoding from "../components/common/ResultCoding";
+import swal from "sweetalert";
+import qs from "querystring";
 
 const Exercise = () => {
     const user = useSelector(state => state.main.user);
@@ -42,7 +44,61 @@ const Exercise = () => {
 
     const handleSubmit = (e)=>{
         e.preventDefault();
-        console.log(code)
+        if (!code) {
+            swal({
+                title: "Đáp án không được để trống",
+                icon: 'error',
+                timer: 1500,
+                button: false
+            }).then(r => r)
+        } else {
+            let payload = {
+                id: quiz.id,
+                code: code,
+                keyName: 2,
+                doTime: 1
+            }
+            AxiosBe.post(`/api/submitCode/${user.id}`, qs.stringify(payload))
+                .then(({data: res}) => {
+                    if (res.success) {
+                        swal({
+                            title: res.message,
+                            icon: 'success',
+                            timer: 1500,
+                            button: false
+                        }).then(r => r)
+                        AxiosBe.get(`/api/coding?courseId=${course.id}&userId=${user.id}`)
+                            .then(({data: res}) => {
+                                const lessons = res.data.sort((a, b) => {
+                                    if (a.levelId === b.levelId){
+                                        return a.sequenceNumber - b.sequenceNumber
+                                    }
+                                    return a.levelId - b.levelId
+                                })
+                                dispatch(setExercises(lessons))
+                            })
+                            .catch(err => {
+                                dispatch(setExercises([]))
+                            })
+                    } else {
+                        swal({
+                            title: res.message,
+                            icon: 'error',
+                            timer: 1500,
+                            button: false
+                        }).then(r => r)
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    swal({
+                        title: "Có lỗi xảy ra  trong quá trình xử lí",
+                        icon: 'error',
+                        timer: 1500,
+                        button: false
+                    }).then(r => r)
+                })
+        }
     }   
 
     if (course) {
@@ -59,7 +115,8 @@ const Exercise = () => {
                                 {
                                     quiz ?
                                         <section>
-                                            <h4 className={'Title mb-4'}>{quiz.question}</h4>
+                                            <h4 className={'Title '}>{quiz.title}</h4>
+                                            <h5 className={'mb-4'}>{quiz.question}</h5>
                                             <Editor readOnly={false} code={quiz.code} type={course['LanguageChallenges'][0]['title']} change={(code) =>setCode(code)}/>
                                             <form action="" className={'py-5'}>
                                                 <div className={'d-flex w-100'}>

@@ -15,6 +15,21 @@ const Test = () => {
     const course = useSelector(state => state.course.course);
     const user = useSelector(state => state.main.user);
     const [assessment, setAssessment] = useState(null);
+    const [assessmentAnswer, setAssessmentAnswer] = useState(null);
+
+    const handleChangeCode = (item,code)=>{
+        if (assessmentAnswer) {
+            const index = assessmentAnswer.findIndex(quiz => item.id === quiz.id);
+            assessmentAnswer[index].code = code
+        }
+    };
+    const handleChangeAnswer = (item,answer)=>{
+
+        if (assessmentAnswer) {
+            const index = assessmentAnswer.findIndex(quiz => item.id === quiz.id);
+            assessmentAnswer[index].answer = answer;
+        }
+    };
     const handleStart = () => {
         swal({
             title: "Bắt đầu làm bài ?",
@@ -23,22 +38,33 @@ const Test = () => {
             dangerMode: true,
         }).then(r => {
             AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
-                .then(({data:res})=>{
-                    if (res.success){
+                .then(({data: res}) => {
+                    if (res.success) {
                         setAssessment(res.data)
-                    }else{
+                        setAssessmentAnswer(res.data.map(item => {
+                            return {
+                                id: item.id,
+                                code: item.code,
+                                answer: ''
+                            }
+                        }))
+                        window.scrollTo(0,0);
+                    } else {
                         swal({
                             title: "Hiện tại chưa có đề thi nào !",
                             icon: "error",
                             buttons: false,
-                            timer:1500
+                            timer: 1500
                         }).then(r => r)
                     }
                 })
-                .catch(err=>{
+                .catch(err => {
                     console.log(err)
                 })
         })
+    }
+    const handleSubmit = ()=>{
+        console.table(assessmentAnswer)
     }
     if (course)
         return (
@@ -68,19 +94,37 @@ const Test = () => {
                             :
                             <Col xs={6} className={'p-4'}>
                                 <section>
-                                    {assessment.map((item,index) =>{
-                                        return <div className={'mt-4'} key={item.id}>
-                                            <h6 className={'title'}>Câu {index+1}</h6>
-                                            <Editor code={item.code} type={course['LanguageChallenges'][0]['title']} change={(code) =>{}}/>
-                                            <Form.Control className={"mt-2"} type="text" placeholder="Nhập đáp án ..." />
-                                        </div>
+                                    {assessment.map((item, index) => {
+                                        if (item.kindChallengeId === 1)
+                                            return <div className={'mb-5'} key={item.id}>
+                                                <h6 className={'title mb-2'}>Câu {index + 1}</h6>
+                                                <h5>{item.title}</h5>
+                                                <h6>{item.question}</h6>
+                                                <Editor readOnly={true} code={item.code}
+                                                        type={course['LanguageChallenges'][0]['title']}
+                                                        change={(code) => {
+                                                        }}/>
+                                                <Form.Control onChange={(e)=>handleChangeAnswer(item,e.target.value)} className={"mt-2"} type="text"
+                                                              placeholder="Nhập đáp án ..."/>
+                                            </div>
+                                        else
+                                            return <div className={'mb-5'} key={item.id}>
+                                                <h6 className={'title mb-2'}>Câu {index + 1}</h6>
+                                                <h5>{item.title}</h5>
+                                                <h6>{item.question}</h6>
+                                                <Editor code={item.code} type={course['LanguageChallenges'][0]['title']}
+                                                        change={(code) => {
+                                                            handleChangeCode(item,code)
+                                                        }}/>
+                                            </div>
                                     })}
+                                    <hr/>
                                 </section>
-                                <Button className={"mt-5"} block={true}>Nộp bài</Button>
+                                <Button className={"mt-5"} onClick={handleSubmit} block={true}>Nộp bài</Button>
                             </Col>
 
                     }
-                   {/* <Modal show={true} dialogClassName="modal-300w">
+                    {/* <Modal show={true} dialogClassName="modal-300w">
                         <Modal.Header closeButton>
                             <Modal.Title>
                                 <h1 className={'title mb-0'}>Kết quả</h1>

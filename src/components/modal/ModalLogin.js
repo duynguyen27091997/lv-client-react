@@ -40,7 +40,7 @@ const ModalLogin = (props) => {
                             timer:1500
                         }).then(r => r)
                     }
-                    resetForm();
+                    // resetForm();
                     handleClose()
                 } else {
                     setResErr(res.message)
