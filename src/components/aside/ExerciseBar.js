@@ -7,7 +7,13 @@ import swal from "sweetalert";
 const ExerciseBar = ({current,changeQuiz}) => {
     const exercises = useSelector(state => state.course.exercises);
     const [process,setProcess] = useState(0)
+    const [key, setKey] = useState(0);
     const [listObject, setListObject] = useState([]);
+    useEffect(_ => {
+        if (current) {
+            setKey(current.levelId)
+        }
+    }, [current])
 
     useEffect(_ => {
         let listQuizPass = exercises.filter(quiz => quiz.members.length);
@@ -42,13 +48,13 @@ const ExerciseBar = ({current,changeQuiz}) => {
                 <CircleProcess percent={process}/>
             </div>
             <div className={'Aside__List'}>
-                <Accordion defaultActiveKey={1}>
+                {current && <Accordion activeKey={key}>
                     <div className={'text-left'}>
                         {
                             Array.from(listObject).map(level =>
                                 <div key={level.order} className={"object object-exercise mb-3"}>
                                     <Accordion.Toggle as={'div'} eventKey={level.order}>
-                                        <div className={'btn btn-primary'}>Bài {level.order}</div>
+                                        <div onClick={_=>setKey(level.order)} className={'btn btn-primary'}>Bài {level.order}</div>
                                     </Accordion.Toggle>
                                     <Accordion.Collapse eventKey={level.order}>
                                         <ul>
@@ -62,7 +68,7 @@ const ExerciseBar = ({current,changeQuiz}) => {
                                 </div>)
                         }
                     </div>
-                </Accordion>
+                </Accordion>}
             </div>
         </div>
     );
