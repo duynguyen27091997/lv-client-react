@@ -18,17 +18,21 @@ const ExerciseBar = ({current,changeQuiz}) => {
     useEffect(_ => {
         let listQuizPass = exercises.filter(quiz => quiz.members.length);
         setProcess(Math.round(listQuizPass.length / exercises.length * 100) || 0)
+
         if (listQuizPass.length < exercises.length) {
-            changeQuiz(exercises[listQuizPass.length])
+            let index = exercises.findIndex(quiz=> !quiz.members.length);
+            if (index !== -1) {
+                changeQuiz(exercises[index])
+            } else {
+                changeQuiz(exercises[exercises.length - 1])
+            }
         } else {
-            changeQuiz(exercises[listQuizPass.length-1])
-            if (exercises && current)
-                if (exercises[exercises.length - 1].id === current.id) {
-                    swal({
-                        title: 'Bạn đã hoàn thành tất cả các câu hỏi',
-                        icon: 'info',
-                    }).then(r => r)
-                }
+            if (current && exercises[exercises.length - 1].id !== current.id) {
+                let index = exercises.findIndex(item => item.id === current.id);
+                changeQuiz(exercises[index + 1])
+            } else {
+                changeQuiz(exercises[listQuizPass.length - 1])
+            }
         }
     }, [exercises])
 
