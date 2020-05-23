@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {logOut} from "../../actions/rootActions";
 import swal from 'sweetalert';
+import ModalChangePass from "../modal/ModalChangePass";
+
 class User extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             showMenu: false,
+            showChangePass: false
         };
 
         this.showMenu = this.showMenu.bind(this);
@@ -37,12 +40,12 @@ class User extends Component {
         this.props.dispatch(logOut());
         localStorage.removeItem('token');
         swal({
-            title:'Bạn đã đăng xuất khỏi tài khoản',
-            icon:'error'
-        }).then(r =>r)
+            title: 'Bạn đã đăng xuất khỏi tài khoản',
+            icon: 'error'
+        }).then(r => r)
     }
 
-    render()  {
+    render() {
         let {user} = this.props;
         return (
             <div className={'user'}>
@@ -62,15 +65,21 @@ class User extends Component {
                             }}>
                                 <ul>
                                     <li onClick={() => {
+                                        this.setState({showChangePass: true})
+                                    }}><i className="las la-lock"/> Đổi mật khẩu
+                                    </li>
+                                    <li onClick={() => {
                                         this.handleLogout()
                                     }}><i className="las la-power-off mr-2"/> Đăng xuất
                                     </li>
                                 </ul>
-
                             </div>)
                         :
                         null
                 }
+                <ModalChangePass show={this.state.showChangePass} closeModal={() => {
+                    this.setState({showChangePass: false})
+                }}/>
             </div>
         );
     }

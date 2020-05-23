@@ -55,10 +55,11 @@ const Exercise = () => {
             let payload = {
                 id: quiz.id,
                 code: code,
-                keyName: 2,
+                result:'',
+                keyName: 1,
                 doTime: 1
             }
-            AxiosBe.post(`/api/submitCode/${user.id}`, qs.stringify(payload))
+            AxiosBe.post(`/api/submit/${user.id}`, qs.stringify(payload))
                 .then(({data: res}) => {
                     if (res.success) {
                         swal({

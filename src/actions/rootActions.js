@@ -32,6 +32,20 @@ export const login = function (params) {
         })
     }
 }
+export const changePass = function (params) {
+    return dispatch => {
+        return new Promise((resolve, reject) => {
+            AxiosBe.post('/api/change-password', qs.stringify(params))
+                .then(res => {
+                    resolve(res)
+                })
+                .catch(err => {
+                    reject(err)
+
+                })
+        })
+    }
+}
 export const signUp = function (params) {
     return dispatch => {
         return new Promise((resolve, reject) => {
