@@ -60,8 +60,15 @@ const ExerciseBar = ({current,changeQuiz}) => {
                                         <ul>
                                             {
                                                 level.items.map(quiz =>
-                                                    <li onClick={()=>changeQuiz(quiz)} className={'badge badge-secondary'}
-                                                        key={quiz.id}>{quiz.title}</li>)
+                                                {
+                                                    if (quiz.members.length){
+                                                        return <li onClick={()=>changeQuiz(quiz)} className={'badge badge-success'}
+                                                                   key={quiz.id}>{quiz.title}</li>
+                                                    }else{
+                                                        return <li onClick={()=>changeQuiz(quiz)} className={'badge badge-secondary'}
+                                                                   key={quiz.id}>{quiz.title}</li>
+                                                    }
+                                                })
                                             }
                                         </ul>
                                     </Accordion.Collapse>
