@@ -87,7 +87,7 @@ const Home = (props) => {
                         <div className={'card-deck'}>
                             {
                                 list.slice(0, 2).map((article, index) => {
-                                    return <Col><ArticleIntro article={article} key={index}/></Col>
+                                    return <Col key={index}><ArticleIntro article={article} /></Col>
                                 })
                             }
                         </div>
@@ -96,7 +96,7 @@ const Home = (props) => {
                         <div className={'card-deck'}>
                             {
                                 list.slice(2, 4).map((article, index) => {
-                                    return <Col><ArticleIntro article={article} key={index}/></Col>
+                                    return <Col key={index}><ArticleIntro article={article} /></Col>
                                 })
                             }
                         </div>
