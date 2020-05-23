@@ -3,6 +3,7 @@ import {Modal} from "react-bootstrap";
 import useForm from "../../helpers/userForm";
 import {changePass} from "../../actions/rootActions";
 import {useDispatch, useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
 import swal from "sweetalert";
 
 const ModalChangePass = (props) => {
@@ -14,6 +15,7 @@ const ModalChangePass = (props) => {
         newPassRe: ''
     };
     const dispatch = useDispatch();
+    const history = useHistory();
     const validate = ()=>{
         let errors = {};
         //validate name
@@ -45,11 +47,11 @@ const ModalChangePass = (props) => {
                         title: "Đổi mật khẩu thành công. Vui lòng đăng nhập lại",
                         icon: "success",
                         button: false,
-                        // timer:1500
+                        timer:1500
                     }).then(r => r)
                     localStorage.removeItem('token');
+                    history.push('/?login')
                     // resetForm();
-                    handleClose()
                 } else {
                     setResErr(res.message)
                 }

@@ -77,7 +77,7 @@ class User extends Component {
                             :
                             null
                     }
-                    <ModalChangePass show={this.state.showChangePass} closeModal={() => {}}/>
+                    <ModalChangePass show={this.state.showChangePass} closeModal={() => {this.setState({showChangePass: false})}}/>
                 </div>
             );
         }else {

@@ -1,6 +1,27 @@
-.ArticleIntro{
-  padding: 5px;
+.ArticleIntro {
+
   cursor: pointer;
+  flex-direction: row;
+  align-items: center;
+  margin: 15px 0!important;
+  padding: 15px;
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
+
+  .card-title {
+    font-size: 25px;
+    font-weight: 700;
+    color: #5d78ff;
+  }
+
+  .card-body {
+    border-top: none;
+  }
+
+  img {
+    width: 100px;
+    height: 100px;
+  }
+
   &::before,
   &::after {
     position: absolute;

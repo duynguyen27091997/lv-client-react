@@ -3,43 +3,44 @@ import './scss/Home.scss';
 import {Col, Container, Row} from "react-bootstrap";
 import ArticleIntro from "../components/home/ArticleIntro";
 import Banner from '../assets/img/Banner.jpg';
-import imgBaiHoc from '../assets/img/home/Bai_hoc.png';
-import imgLuyenTap from '../assets/img/home/Luyen_tap.png';
-import imgKiemTra from '../assets/img/home/Kiem_tra.png';
-import imgMienPhi from '../assets/img/home/Mien_phi.png';
+import imgBaiHoc from '../assets/img/home/book.png';
+import imgLuyenTap from '../assets/img/home/practice.png';
+import imgKiemTra from '../assets/img/home/coding.png';
+import imgMienPhi from '../assets/img/home/computer.png';
 import {AxiosBe} from "../utils/axios";
 import CountUp from "react-countup";
 
 const Home = (props) => {
-    const [counts,setCounts]= useState({});
-    useEffect(_=>{
-        AxiosBe.get('/api/home')
-            .then(({data:res})=>{
-                setCounts(res.data);
-            }).catch(err=>{
-            console.log(err)
-        })
-    },[]);
+    const [counts, setCounts] = useState([]);
+    useEffect(_ => {
+        if (!counts.length)
+            AxiosBe.get('/api/home')
+                .then(({data: res}) => {
+                    setCounts(res.data);
+                }).catch(err => {
+                console.log(err)
+            })
+    }, [counts.length]);
     const list = [
         {
             img: imgBaiHoc,
-            title:'Bài học',
-            content:'Chuỗi các bài học được chia làm 11 mức độ nối tiếp nhau, giúp cho người học đi từ những khái niệm cơ bản nhất cho đến những bài toán giải quyết vấn đề.'
+            title: 'Bài học',
+            content: 'Chuỗi các bài học được chia làm 11 mức độ nối tiếp nhau, giúp cho người học đi từ những khái niệm cơ bản nhất cho đến những bài toán giải quyết vấn đề.'
         },
         {
-            img:imgLuyenTap,
-            title:'Luyện tập',
-            content:'Chuỗi các bài luyện tập giúp học viên thực hành kỹ năng giải quyết vấn đề và áp dụng các thuật toán thông dụng trong những bài toán thường gặp.'
+            img: imgLuyenTap,
+            title: 'Luyện tập',
+            content: 'Chuỗi các bài luyện tập giúp học viên thực hành kỹ năng giải quyết vấn đề và áp dụng các thuật toán thông dụng trong những bài toán thường gặp.'
         },
         {
-            img:imgKiemTra,
-            title:'Bài kiểm tra',
-            content:'Bài kiểm tra ngắn là bước cuối cùng để học viên hoàn thành các nội dung luyện tập, giúp học viên biết được tình trạng của mình sau một thời gian luyện tập.'
+            img: imgKiemTra,
+            title: 'Bài kiểm tra',
+            content: 'Bài kiểm tra ngắn là bước cuối cùng để học viên hoàn thành các nội dung luyện tập, giúp học viên biết được tình trạng của mình sau một thời gian luyện tập.'
         },
         {
-            img:imgMienPhi,
-            title:'Miễn phí',
-            content:'Nền tảng CodeGym Bob được cung cấp hoàn toàn miễn phí nhằm tạo điều kiện tốt nhất cho tất cả mọi người có cơ hội tiếp cận và luyện tập bất cứ lúc nào.'
+            img: imgMienPhi,
+            title: 'Miễn phí',
+            content: 'Nền tảng Small Code được cung cấp hoàn toàn miễn phí nhằm tạo điều kiện tốt nhất cho tất cả mọi người có cơ hội tiếp cận và luyện tập bất cứ lúc nào.'
         },
 
     ];
@@ -69,9 +70,9 @@ const Home = (props) => {
                 <Container>
                     <Row>
                         {
-                            counts.length && counts.map((count,index) =><Col className={"my-5"} key={index}>
+                            counts.length && counts.map((count, index) => <Col className={"my-5"} key={index}>
                                 <div className={'count-up'}>
-                                    <h2><CountUp end={count.count} duration={5} /></h2>
+                                    <h2><CountUp delay={0.5} end={count.count} duration={5}/></h2>
                                     <h5>{count.title}</h5>
                                 </div>
                             </Col>)
@@ -84,9 +85,17 @@ const Home = (props) => {
                     <Row>
                         <div className={'card-deck'}>
                             {
-                                list.map((article, index) => {
-                                    return <ArticleIntro article={article} key={index}
-                                                         onClick={() => props.showLogin()}/>
+                                list.slice(0, 2).map((article, index) => {
+                                    return <Col><ArticleIntro article={article} key={index}/></Col>
+                                })
+                            }
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className={'card-deck'}>
+                            {
+                                list.slice(2, 4).map((article, index) => {
+                                    return <Col><ArticleIntro article={article} key={index}/></Col>
                                 })
                             }
                         </div>
