@@ -5,6 +5,10 @@ import {AxiosBe} from "../utils/axios";
 const ActiveEmail = (props) => {
     let [success,setSuccess] = useState(false);
     let [error,setError] = useState('');
+
+    const handleShowLogin = _=>{
+        props.history.push('/?login')
+    }
     useEffect(_ => {
         try {
             let data = props.location.search.split('=');
@@ -34,7 +38,7 @@ const ActiveEmail = (props) => {
         <main className={"box-active"}>
             <h3 style={{maxWidth:"50vw"}}>{error}</h3>
             <p className={"mt-5"}> Click vào nút phía dưới để đăng nhâp</p>
-            <div onClick={props.showLogin} className={'button-active'}>Đăng nhập</div>
+            <div onClick={handleShowLogin} className={'button-active'}>Đăng nhập</div>
         </main>
     );
     else
