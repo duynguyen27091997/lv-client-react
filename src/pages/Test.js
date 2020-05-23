@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
@@ -10,20 +10,23 @@ import {Redirect} from "react-router-dom";
 import swal from 'sweetalert';
 import {AxiosBe} from "../utils/axios";
 import Editor from "../editor/Editor";
+import {toTime} from "../helpers/helpers";
 
 const Test = () => {
     const course = useSelector(state => state.course.course);
     const user = useSelector(state => state.main.user);
     const [assessment, setAssessment] = useState(null);
+    const [test, setTest] = useState(null);
+    const [expire, setExpire] = useState(false);
     const [assessmentAnswer, setAssessmentAnswer] = useState(null);
 
-    const handleChangeCode = (item,code)=>{
+    const handleChangeCode = (item, code) => {
         if (assessmentAnswer) {
             const index = assessmentAnswer.findIndex(quiz => item.id === quiz.id);
             assessmentAnswer[index].code = code
         }
     };
-    const handleChangeAnswer = (item,answer)=>{
+    const handleChangeAnswer = (item, answer) => {
 
         if (assessmentAnswer) {
             const index = assessmentAnswer.findIndex(quiz => item.id === quiz.id);
@@ -37,35 +40,68 @@ const Test = () => {
             buttons: true,
             dangerMode: true,
         }).then(r => {
-            AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
-                .then(({data: res}) => {
-                    if (res.success) {
-                        setAssessment(res.data)
-                        setAssessmentAnswer(res.data.map(item => {
-                            return {
-                                id: item.id,
-                                code: item.code,
-                                answer: ''
-                            }
-                        }))
-                        window.scrollTo(0,0);
-                    } else {
-                        swal({
-                            title: "Hiện tại chưa có đề thi nào !",
-                            icon: "error",
-                            buttons: false,
-                            timer: 1500
-                        }).then(r => r)
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+            if (r)
+                AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
+                    .then(({data: res}) => {
+                        if (res.success) {
+                            setAssessment(res.data)
+                            setTest({...res.assessment, total: res.assessment.duration});
+                            setAssessmentAnswer(res.data.map(item => {
+                                return {
+                                    id: item.id,
+                                    kindChallengeId:item.kindChallengeId,
+                                    code: item.code,
+                                    answer: ''
+                                }
+                            }))
+                            window.scrollTo(0, 0);
+                        } else {
+                            swal({
+                                title: "Hiện tại chưa có đề thi nào !",
+                                icon: "error",
+                                buttons: false,
+                                timer: 1500
+                            }).then(r => r)
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
         })
     }
-    const handleSubmit = ()=>{
-        console.table(assessmentAnswer)
+    const handleSubmit = () => {
+        swal({
+            title: "Nộp bài ?",
+            icon: "info",
+            buttons: true,
+            dangerMode: true,
+        }).then(r => {
+            if (r) {
+                setExpire(true);
+                console.table({
+                    userId: user.id,
+                    assessmentId:test.id,
+                    courseId: course.id,
+                    time: test.total - test.duration,
+                    data: assessmentAnswer
+                })
+            }
+        })
     }
+
+    useEffect(_ => {
+        if (test) {
+            if (!expire)
+                if (test.duration !== 0)
+                    setTimeout(_ => {
+                        setTest({...test, duration: test.duration - 1})
+                    }, 1000)
+                else {
+                    handleSubmit()
+                }
+        }
+    }, [test, expire])
+
     if (course)
         return (
             <Container fluid={true} className={'Content'}>
@@ -93,62 +129,91 @@ const Test = () => {
                             </Col>
                             :
                             <Col xs={6} className={'p-4'}>
-                                <section>
-                                    {assessment.map((item, index) => {
-                                        if (item.kindChallengeId === 1)
-                                            return <div className={'mb-5'} key={item.id}>
-                                                <h6 className={'title mb-2'}>Câu {index + 1}</h6>
-                                                <h5>{item.title}</h5>
-                                                <h6>{item.question}</h6>
-                                                <Editor readOnly={true} code={item.code}
-                                                        type={course['LanguageChallenges'][0]['title']}
-                                                        change={(code) => {
-                                                        }}/>
-                                                <Form.Control onChange={(e)=>handleChangeAnswer(item,e.target.value)} className={"mt-2"} type="text"
-                                                              placeholder="Nhập đáp án ..."/>
-                                            </div>
-                                        else
-                                            return <div className={'mb-5'} key={item.id}>
-                                                <h6 className={'title mb-2'}>Câu {index + 1}</h6>
-                                                <h5>{item.title}</h5>
-                                                <h6>{item.question}</h6>
-                                                <Editor code={item.code} type={course['LanguageChallenges'][0]['title']}
-                                                        change={(code) => {
-                                                            handleChangeCode(item,code)
-                                                        }}/>
-                                            </div>
-                                    })}
-                                    <hr/>
-                                </section>
-                                <Button className={"mt-5"} onClick={handleSubmit} block={true}>Nộp bài</Button>
+                                {assessment.length ?
+                                    <div>
+                                        <section>
+                                            {assessment.map((item, index) => {
+                                                if (item.kindChallengeId === 1)
+                                                    return <div className={'mb-5'} key={item.id}>
+                                                        <h6 className={'title mb-2'}>Câu {index + 1}</h6>
+                                                        <h5>{item.title}</h5>
+                                                        <h6>{item.question}</h6>
+                                                        <Editor readOnly={true} code={item.code}
+                                                                type={course['LanguageChallenges'][0]['title']}
+                                                                change={(code) => {
+                                                                }}/>
+                                                        <Form.Control
+                                                            onChange={(e) => handleChangeAnswer(item, e.target.value)}
+                                                            className={"mt-2"} type="text"
+                                                            placeholder="Nhập đáp án ..."/>
+                                                    </div>
+                                                else
+                                                    return <div className={'mb-5'} key={item.id}>
+                                                        <h6 className={'title mb-2'}>Câu {index + 1}</h6>
+                                                        <h5>{item.title}</h5>
+                                                        <h6>{item.question}</h6>
+                                                        <Editor code={item.code}
+                                                                type={course['LanguageChallenges'][0]['title']}
+                                                                change={(code) => {
+                                                                    handleChangeCode(item, code)
+                                                                }}/>
+                                                    </div>
+                                            })}
+                                            <hr/>
+                                        </section>
+                                        <Button className={"mt-5"} onClick={handleSubmit} block={true}>Nộp bài</Button>
+                                    </div>
+                                    :
+                                    <div className={'mb-5'}>
+                                        <h4 className={'text-muted'}>Hiện chưa có câu hỏi nào !</h4>
+                                    </div>
+                                }
                             </Col>
 
                     }
-                    {/* <Modal show={true} dialogClassName="modal-300w">
-                        <Modal.Header closeButton>
-                            <Modal.Title>
-                                <h1 className={'title mb-0'}>Kết quả</h1>
-                            </Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <div className={"d-flex flex-column"} style={{width:'200px',margin:'0 auto'}}>
-                                <div className="btn btn-success mb-2">Câu 1</div>
-                                <div className="btn btn-success mb-2">Câu 2</div>
-                                <div className="btn btn-danger mb-2">Câu 3</div>
-                                <div className="btn btn-success mb-2">Câu 4</div>
-                                <div className="btn btn-danger mb-2">Câu 5</div>
-                                <div className="btn btn-success mb-2">Câu 6</div>
-                                <div className="btn btn-success mb-2">Câu 7</div>
-                                <div className="btn btn-success mb-2">Câu 8</div>
-                                <div className="btn btn-danger mb-2">Câu 9</div>
-                                <div className="btn btn-success mb-2">Câu 10</div>
-                            </div>
-                            <div className={"mt-5"}>
-                                <div className="btn btn-info mb-2 w-100" >Xác Nhận</div>
-                            </div>
-                        </Modal.Body>
-                    </Modal>*/}
+                    {/* <Modal show={true} dialogClassName="modal-300w">*/}
+                    {/*    <Modal.Header closeButton>*/}
+                    {/*        <Modal.Title>*/}
+                    {/*            <h1 className={'title mb-0'}>Kết quả</h1>*/}
+                    {/*        </Modal.Title>*/}
+                    {/*    </Modal.Header>*/}
+                    {/*    <Modal.Body>*/}
+                    {/*        <div className={"d-flex flex-column"} style={{width:'200px',margin:'0 auto'}}>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 1</div>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 2</div>*/}
+                    {/*            <div className="btn btn-danger mb-2">Câu 3</div>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 4</div>*/}
+                    {/*            <div className="btn btn-danger mb-2">Câu 5</div>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 6</div>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 7</div>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 8</div>*/}
+                    {/*            <div className="btn btn-danger mb-2">Câu 9</div>*/}
+                    {/*            <div className="btn btn-success mb-2">Câu 10</div>*/}
+                    {/*        </div>*/}
+                    {/*        <div className={"mt-5"}>*/}
+                    {/*            <div className="btn btn-info mb-2 w-100" >Xác Nhận</div>*/}
+                    {/*        </div>*/}
+                    {/*    </Modal.Body>*/}
+                    {/*</Modal>*/}
                 </Row>
+                {
+                    test &&
+                    <div className={'test__bottom'}>
+                        <Row>
+                            <Col>
+                                <div className={'d-flex justify-content-center align-items-center'}
+                                     style={{height: 50}}>
+                                    <span className={"mr-3"}>Thời gian còn lại : </span>
+                                    <div className={'test__bar'}>
+                                        <span className={'test__bar__process'}
+                                              style={{width: (test.duration / test.total) * 100 + '%'}}/>
+                                    </div>
+                                    <span className={"ml-3"}>{toTime(test.duration)}</span>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+                }
             </Container>
         );
     else
