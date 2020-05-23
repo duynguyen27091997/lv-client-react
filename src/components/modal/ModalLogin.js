@@ -13,10 +13,28 @@ const ModalLogin = (props) => {
         password: ''
     };
     const dispatch = useDispatch();
-    const {handleChange, handleSubmit, values, errors,resetForm} = useForm(stateSchema, submit, validate);
+    const {handleChange, handleSubmit, values, errors, resetForm} = useForm(stateSchema, submit, validate);
     const handleClose = () => {
-        props.closeModal()
+        setResErr('')
+        resetForm();
+        setTimeout(_ => {
+            props.closeModal()
+        }, 100)
+
     };
+
+    function forgotPassword() {
+        swal({
+            title: "Mật khẩu sẽ được reset và gửi tới email của bạn",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then(r => {
+            if (r) {
+                props.forgotPassword()
+            }
+        })
+    }
 
     function submit() {
         dispatch(login({email: values.email, password: values.password}))
@@ -31,13 +49,12 @@ const ModalLogin = (props) => {
                     try {
                         let {token} = res.data.user;
                         localStorage.setItem('token', token)
-                    }
-                    catch (e) {
+                    } catch (e) {
                         swal({
                             title: "Có lỗi xảy ra trong quá trình login",
                             icon: "error",
                             button: false,
-                            timer:1500
+                            timer: 1500
                         }).then(r => r)
                     }
                     // resetForm();
@@ -79,6 +96,12 @@ const ModalLogin = (props) => {
                     </div>
                     <div className="form-group pt-4">
                         <button type={'submit'} className={'Button Button--full'}>Đăng Nhập</button>
+                    </div>
+                    <div className="form-group pt-4">
+                        <p onClick={() => {
+                            handleClose();
+                            forgotPassword()
+                        }} className={'forgot-pass text-right'}>Quên mật khẩu ?</p>
                     </div>
                     <div className="form-group pt-3 text-center">
                         <p>Chưa có tài khoản ? <span className={'text-underline Link'} onClick={props.switchRegister}>Đăng Ký</span>

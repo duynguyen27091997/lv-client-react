@@ -168,3 +168,12 @@ input {
     }
   }
 }
+.forgot-pass{
+  cursor: pointer;
+  font-size: 15px;
+  color: rgba(0,0,0,.7);
+  &:hover{
+    color:#5d78ff ;
+    text-decoration: underline;
+  }
+}

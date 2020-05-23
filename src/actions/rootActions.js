@@ -37,6 +37,8 @@ export const changePass = function (params) {
         return new Promise((resolve, reject) => {
             AxiosBe.post('/api/change-password', qs.stringify(params))
                 .then(res => {
+                    if (res.data.success)
+                        dispatch(logOut());
                     resolve(res)
                 })
                 .catch(err => {

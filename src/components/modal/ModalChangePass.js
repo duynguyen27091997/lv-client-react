@@ -19,12 +19,17 @@ const ModalChangePass = (props) => {
         //validate name
         if (!values.pass)
             errors.pass = 'Bạn chưa nhập mật khẩu cũ !';
+
         if (!values.newPass){
             errors.newPass = 'Mật khẩu mới không được để trống !';
-        }
+        }else if (values.newPass.length < 6)
+            errors.password = 'Password không ít hơn 6 kí tự !';
+
         if (values.newPassRe !== values.newPass){
             errors.newPassRe = 'Không trùng với mật khẩu mới!';
-        }
+        }else if (values.newPassRe.length < 6)
+            errors.password = 'Password không ít hơn 6 kí tự !';
+
         return errors;
     }
     const {handleChange, handleSubmit, values, errors} = useForm(stateSchema, submit, validate);
@@ -33,27 +38,16 @@ const ModalChangePass = (props) => {
     };
 
     function submit() {
-        dispatch(changePass({id:user.id,password:values.pass,newPassword:values.newPass}))
+        dispatch(changePass({email:user.email,password:values.pass,newPassword:values.newPass}))
             .then(({data: res}) => {
                 if (res.success) {
                     swal({
-                        title: res.message,
+                        title: "Đổi mật khẩu thành công. Vui lòng đăng nhập lại",
                         icon: "success",
                         button: false,
                         // timer:1500
                     }).then(r => r)
-                    try {
-                        let {token} = res.data.user;
-                        localStorage.setItem('token', token)
-                    }
-                    catch (e) {
-                        swal({
-                            title: "Có lỗi xảy ra trong quá trình login",
-                            icon: "error",
-                            button: false,
-                            timer:1500
-                        }).then(r => r)
-                    }
+                    localStorage.removeItem('token');
                     // resetForm();
                     handleClose()
                 } else {
@@ -61,7 +55,7 @@ const ModalChangePass = (props) => {
                 }
             })
             .catch(err => {
-                console.log(err)
+                setResErr(err.message)
             })
     }
 
@@ -76,7 +70,7 @@ const ModalChangePass = (props) => {
                     <div className="form-group">
                         <label htmlFor="">Mật khẩu cũ</label>
                         <input
-                            name={'pass'} type="password" placeholder={'Email *'} value={values.pass}
+                            name={'pass'} type="password" placeholder={'Mật khẩu cũ *'} value={values.pass}
                             onChange={handleChange}
                         />
                         {errors.pass && <small className={'text-danger'}>{errors.pass}</small>}
@@ -86,7 +80,7 @@ const ModalChangePass = (props) => {
                         <label htmlFor="">Mật khẩu mới</label>
                         <input
                             onChange={handleChange}
-                            name={'newPass'} type="password" placeholder={'Password *'} value={values.newPass}
+                            name={'newPass'} type="password" placeholder={'Mật khẩu mới *'} value={values.newPass}
                         />
                         {errors.newPass && <small className={'text-danger'}>{errors.newPass}</small>}
                         {/*error message here*/}

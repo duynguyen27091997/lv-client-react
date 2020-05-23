@@ -7,8 +7,16 @@ import ModalRegister from "../components/modal/ModalRegister";
 import ModalLogin from "../components/modal/ModalLogin";
 import {connect} from 'react-redux';
 import User from "../components/user/User";
+import ModalForgotPass from "../components/modal/ModalForgotPass";
 
 class Header extends Component {
+    constructor(props) {
+        super(props);
+        this.state ={
+            showForgotPass : false
+        }
+    }
+
     render() {
         let {user} = this.props;
         return (
@@ -17,7 +25,8 @@ class Header extends Component {
                     <Row>
                         <Col>
                             <Navbar className={' p-0'}>
-                                <div className={'d-flex justify-content-between w-100 align-items-center'} style={{height:'60px'}}>
+                                <div className={'d-flex justify-content-between w-100 align-items-center'}
+                                     style={{height: '60px'}}>
                                     <Navbar.Brand className={'p-0'}>
                                         <Link to={'/'}>
                                             <img height={50} className={'Header__logo'} src={Logo} alt=""/>
@@ -44,7 +53,8 @@ class Header extends Component {
                                                    closeModal={this.props.closeRegister}
                                                    switchLogin={this.props.showLogin}/>
                                     <ModalLogin showLogin={this.props.login} closeModal={this.props.closeLogin}
-                                                switchRegister={this.props.showRegister}/>
+                                                switchRegister={this.props.showRegister} forgotPassword={()=>this.setState({showForgotPass:true})}/>
+                                    <ModalForgotPass show={this.state.showForgotPass} closeModal={()=>this.setState({showForgotPass:false})}/>
                                 </div>
                             </Navbar>
                         </Col>
