@@ -70,12 +70,13 @@ const Home = (props) => {
                 <Container>
                     <Row>
                         {
-                            counts.length && counts.map((count, index) => <Col className={"my-5"} key={index}>
+                            counts.length ? counts.map((count, index) => <Col className={"my-5"} key={index}>
                                 <div className={'count-up'}>
                                     <h2><CountUp delay={0.5} end={count.count} duration={5}/></h2>
                                     <h5>{count.title}</h5>
                                 </div>
                             </Col>)
+                                : null
                         }
                     </Row>
                 </Container>
