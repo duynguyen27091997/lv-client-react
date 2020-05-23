@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
-import {Button, Form, Modal, Row} from "react-bootstrap";
+import {Button, Form, Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import './scss/Aside.scss'
 import TestBar from "../components/aside/TestBar";

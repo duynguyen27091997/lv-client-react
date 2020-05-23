@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import CircleProcess from "../common/CircleProcess";
 import {useSelector} from "react-redux";
 import {Accordion} from "react-bootstrap";
-import swal from "sweetalert";
 
 const ExerciseBar = ({current,changeQuiz}) => {
     const exercises = useSelector(state => state.course.exercises);

@@ -7,6 +7,7 @@ import {AxiosBe} from "../utils/axios";
 const Courses = () => {
     const [list, setList] = useState([]);
     useEffect(_ => {
+        window.scrollTo(0,0);
         AxiosBe.get('/api/courses')
             .then(({data: res}) => {
                 setList(res.data)
