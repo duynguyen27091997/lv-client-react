@@ -44,44 +44,45 @@ class User extends Component {
             icon: 'error'
         }).then(r => r)
     }
-
     render() {
         let {user} = this.props;
-        return (
-            <div className={'user'}>
+        if (user) {
+            return (
+                <div className={'user'}>
             <span className={'user__avatar'}>
                 <i className="las la-user"/>
             </span>
-                <span className={'ml-3'} onClick={this.showMenu}>
+                    <span className={'ml-3'} onClick={this.showMenu}>
                 {user.username}
-                    <i className="ml-2 las la-caret-down"/>
+                        <i className="ml-2 las la-caret-down"/>
 
             </span>
-                {
-                    this.state.showMenu
-                        ? (
-                            <div className={'user__dropdown'} ref={(element) => {
-                                this.dropdownMenu = element;
-                            }}>
-                                <ul>
-                                    <li onClick={() => {
-                                        this.setState({showChangePass: true})
-                                    }}><i className="las la-lock"/> Đổi mật khẩu
-                                    </li>
-                                    <li onClick={() => {
-                                        this.handleLogout()
-                                    }}><i className="las la-power-off mr-2"/> Đăng xuất
-                                    </li>
-                                </ul>
-                            </div>)
-                        :
-                        null
-                }
-                <ModalChangePass show={this.state.showChangePass} closeModal={() => {
-                    this.setState({showChangePass: false})
-                }}/>
-            </div>
-        );
+                    {
+                        this.state.showMenu
+                            ? (
+                                <div className={'user__dropdown'} ref={(element) => {
+                                    this.dropdownMenu = element;
+                                }}>
+                                    <ul>
+                                        <li onClick={() => {
+                                            this.setState({showChangePass: true})
+                                        }}><i className="las la-lock"/> Đổi mật khẩu
+                                        </li>
+                                        <li onClick={() => {
+                                            this.handleLogout()
+                                        }}><i className="las la-power-off mr-2"/> Đăng xuất
+                                        </li>
+                                    </ul>
+                                </div>)
+                            :
+                            null
+                    }
+                    <ModalChangePass show={this.state.showChangePass} closeModal={() => {}}/>
+                </div>
+            );
+        }else {
+            return <div/>
+        }
     }
 }
 
