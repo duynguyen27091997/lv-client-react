@@ -49,7 +49,7 @@ const Test = () => {
                             setAssessmentAnswer(res.data.map(item => {
                                 return {
                                     id: item.id,
-                                    kindChallengeId:item.kindChallengeId,
+                                    kindChallengeId: item.kindChallengeId,
                                     code: item.code,
                                     answer: ''
                                 }
@@ -70,23 +70,40 @@ const Test = () => {
         })
     }
     const handleSubmit = () => {
-        swal({
-            title: "Nộp bài ?",
-            icon: "info",
-            buttons: true,
-            dangerMode: true,
-        }).then(r => {
-            if (r) {
-                setExpire(true);
-                console.table({
-                    userId: user.id,
-                    assessmentId:test.id,
-                    courseId: course.id,
-                    time: test.total - test.duration,
-                    data: assessmentAnswer
-                })
-            }
-        })
+        if (test.total - test.duration)
+            swal({
+                title: "Nộp bài ?",
+                icon: "info",
+                buttons: true,
+                dangerMode: true,
+            }).then(r => {
+                if (r) {
+                    setExpire(true);
+                    console.table({
+                        userId: user.id,
+                        assessmentId: test.id,
+                        courseId: course.id,
+                        time: test.total - test.duration,
+                        data: assessmentAnswer
+                    })
+                }
+            })
+        else{
+            swal({
+                title: "Đã hết giờ làm bài",
+                icon: "info",
+                buttons: false,
+                timer:1500
+            }).then(r => r)
+            setExpire(true);
+            console.table({
+                userId: user.id,
+                assessmentId: test.id,
+                courseId: course.id,
+                time: test.total - test.duration,
+                data: assessmentAnswer
+            })
+        }
     }
 
     useEffect(_ => {

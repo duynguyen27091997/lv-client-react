@@ -20,22 +20,25 @@ const LessonBar = ({current, changeQuiz}) => {
         setProcess(Math.round(listQuizPass.length / lessons.length * 100) || 0)
 
         if (listQuizPass.length < lessons.length) {
-            changeQuiz(lessons[listQuizPass.length])
-        } else {
+            let index = lessons.findIndex(quiz=> !quiz.members.length);
+            if (index !== -1) {
+                changeQuiz(lessons[index])
+            } else {
+                changeQuiz(lessons[lessons.length - 1])
+
+            }
+        }else{
             if (current && lessons[lessons.length - 1].id !== current.id) {
                 let index = lessons.findIndex(item => item.id === current.id);
                 changeQuiz(lessons[index + 1])
             } else {
                 changeQuiz(lessons[listQuizPass.length - 1])
+                swal({
+                    title: 'Bạn đã hoàn thành tất cả các câu hỏi',
+                    icon: 'info',
+                    button:false
+                }).then(r => r)
             }
-
-            if (lessons && current)
-                if (lessons[lessons.length - 1].id === current.id) {
-                    swal({
-                        title: 'Bạn đã hoàn thành tất cả các câu hỏi',
-                        icon: 'info',
-                    }).then(r => r)
-                }
         }
     }, [lessons])
 
