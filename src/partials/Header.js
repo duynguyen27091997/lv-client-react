@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Container, Navbar, Row, Col} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import './Header.scss';

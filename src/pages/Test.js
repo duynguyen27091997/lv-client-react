@@ -117,6 +117,7 @@ const Test = () => {
                     handleSubmit()
                 }
         }
+        // eslint-disable-next-line
     }, [test, expire])
 
     if (course)
@@ -153,7 +154,7 @@ const Test = () => {
                                                 if (item.kindChallengeId === 1)
                                                     return <div className={'mb-5'} key={item.id}>
                                                         <h6 className={'title mb-2'}>Câu {index + 1}</h6>
-                                                        <h5>{item.title}</h5>
+                                                        <h5>{item.title} (điền đáp án)</h5>
                                                         <h6>{item.question}</h6>
                                                         <Editor readOnly={true} code={item.code}
                                                                 type={course['LanguageChallenges'][0]['title']}
@@ -167,7 +168,7 @@ const Test = () => {
                                                 else
                                                     return <div className={'mb-5'} key={item.id}>
                                                         <h6 className={'title mb-2'}>Câu {index + 1}</h6>
-                                                        <h5>{item.title}</h5>
+                                                        <h5>{item.title} (viết code)</h5>
                                                         <h6>{item.question}</h6>
                                                         <Editor code={item.code}
                                                                 type={course['LanguageChallenges'][0]['title']}

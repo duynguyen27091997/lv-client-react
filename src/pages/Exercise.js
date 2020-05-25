@@ -22,15 +22,18 @@ const Exercise = () => {
 
     const dispatch = useDispatch();
 
-    const [code,setCode] = useState('')
-    const [quiz,setQuiz] = useState(null);
-
+    const [code, setCode] = useState('')
+    const [err, setErr] = useState('')
+    const [quiz, setQuiz] = useState(null);
+    useEffect(_=>{
+        setErr('')
+    },[quiz]);
     useEffect(_ => {
         if (course && !exercises)
             AxiosBe.get(`/api/coding?courseId=${course.id}&userId=${user.id}`)
                 .then(({data: res}) => {
                     const exercises = res.data.sort((a, b) => {
-                        if (a.levelId === b.levelId){
+                        if (a.levelId === b.levelId) {
                             return a.sequenceNumber - b.sequenceNumber
                         }
                         return a.levelId - b.levelId
@@ -42,7 +45,8 @@ const Exercise = () => {
                 })
     }, [course, dispatch, exercises, user.id])
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = (e) => {
+        setErr('');
         e.preventDefault();
         if (!code) {
             swal({
@@ -55,7 +59,7 @@ const Exercise = () => {
             let payload = {
                 id: quiz.id,
                 code: code,
-                result:'',
+                result: '',
                 keyName: 1,
                 doTime: 1
             }
@@ -71,7 +75,7 @@ const Exercise = () => {
                         AxiosBe.get(`/api/coding?courseId=${course.id}&userId=${user.id}`)
                             .then(({data: res}) => {
                                 const lessons = res.data.sort((a, b) => {
-                                    if (a.levelId === b.levelId){
+                                    if (a.levelId === b.levelId) {
                                         return a.sequenceNumber - b.sequenceNumber
                                     }
                                     return a.levelId - b.levelId
@@ -82,12 +86,15 @@ const Exercise = () => {
                                 dispatch(setExercises([]))
                             })
                     } else {
-                        swal({
-                            title: res.message,
-                            icon: 'error',
-                            timer: 1500,
-                            button: false
-                        }).then(r => r)
+                        if (res.dataErr) {
+                            setErr(res.dataErr)
+                        } else
+                            swal({
+                                title: res.message,
+                                icon: 'error',
+                                timer: 1500,
+                                button: false
+                            }).then(r => r)
                     }
                 })
                 .catch(err => {
@@ -100,7 +107,7 @@ const Exercise = () => {
                     }).then(r => r)
                 })
         }
-    }   
+    }
 
     if (course) {
         return (
@@ -109,7 +116,7 @@ const Exercise = () => {
                     exercises ?
                         <Row>
                             <Col className={'Aside__Tool'} xs={3}>
-                                <ExerciseBar current={quiz} changeQuiz={(quiz)=>setQuiz(quiz)}/>
+                                <ExerciseBar current={quiz} changeQuiz={(quiz) => setQuiz(quiz)}/>
                             </Col>
                             <Col xs={3}/>
                             <Col xs={6} className={'p-4'}>
@@ -118,10 +125,22 @@ const Exercise = () => {
                                         <section>
                                             <h4 className={'Title '}>{quiz.title}</h4>
                                             <h5 className={'mb-4'}>{quiz.question}</h5>
-                                            <Editor readOnly={false} code={quiz.code} type={course['LanguageChallenges'][0]['title']} change={(code) =>setCode(code)}/>
+                                            {
+                                                quiz.members.length ?
+                                                    <Editor readOnly={false}
+                                                            code={quiz.members[0]['QuizResult']['code']}
+                                                            type={course['LanguageChallenges'][0]['title']}
+                                                            change={(code) => setCode(code)}/>
+                                                    :
+                                                    <Editor readOnly={false} code={quiz.code}
+                                                            type={course['LanguageChallenges'][0]['title']}
+                                                            change={(code) => setCode(code)}/>
+                                            }
+
                                             <form action="" className={'py-5'}>
                                                 <div className={'d-flex w-100'}>
-                                                    <button onClick={handleSubmit} className={'Button w-100'}>Kiểm tra</button>
+                                                    <button onClick={handleSubmit} className={'Button w-100'}>Kiểm tra
+                                                    </button>
                                                 </div>
                                             </form>
                                             <div>
@@ -133,7 +152,7 @@ const Exercise = () => {
                                 }
                             </Col>
                             <Col xs={3} className={'p-4'}>
-                                <ResultCoding/>
+                                {err ? <ResultCoding err={err}/> : null}
                             </Col>
                         </Row>
                         :

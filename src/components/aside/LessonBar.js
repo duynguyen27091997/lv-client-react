@@ -40,6 +40,7 @@ const LessonBar = ({current, changeQuiz}) => {
                 }).then(r => r)
             }
         }
+        // eslint-disable-next-line
     }, [lessons])
 
     useEffect(_ => {
@@ -82,11 +83,11 @@ const LessonBar = ({current, changeQuiz}) => {
                                                         if (quiz.id === current.id) {
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-info'}
-                                                                       key={quiz.id}>{quiz.title}</li>
+                                                                       key={quiz.id}>{quiz.title} <i className="las la-play"/></li>
                                                         } else if (quiz.members.length)
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-success'}
-                                                                       key={quiz.id}>{quiz.title}</li>
+                                                                       key={quiz.id}>{quiz.title} <i className="las la-check"/></li>
                                                         else
                                                             return <li onClick={() => handleReject()}
                                                                        className={'badge badge-secondary'}

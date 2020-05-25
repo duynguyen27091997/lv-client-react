@@ -58,7 +58,6 @@ const ModalLogin = (props) => {
                         }).then(r => r)
                     }
                     // resetForm();
-                    handleClose()
                 } else {
                     setResErr(res.message)
                 }
