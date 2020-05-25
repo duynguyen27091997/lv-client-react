@@ -33,6 +33,7 @@ const ExerciseBar = ({current,changeQuiz}) => {
                 changeQuiz(exercises[listQuizPass.length - 1])
             }
         }
+        // eslint-disable-next-line
     }, [exercises])
 
     useEffect(_ => {
@@ -64,13 +65,18 @@ const ExerciseBar = ({current,changeQuiz}) => {
                                             {
                                                 level.items.map(quiz =>
                                                 {
-                                                    if (quiz.members.length){
-                                                        return <li onClick={()=>changeQuiz(quiz)} className={'badge badge-success'}
+                                                    if (quiz.id === current.id) {
+                                                        return <li onClick={() => changeQuiz(quiz)}
+                                                                   className={'badge badge-info'}
+                                                                   key={quiz.id}>{quiz.title} <i className="las la-play"/></li>
+                                                    } else if (quiz.members.length)
+                                                        return <li onClick={() => changeQuiz(quiz)}
+                                                                   className={'badge badge-success'}
+                                                                   key={quiz.id}>{quiz.title} <i className="las la-check"/></li>
+                                                    else
+                                                        return <li onClick={() => changeQuiz(quiz)}
+                                                                   className={'badge badge-secondary'}
                                                                    key={quiz.id}>{quiz.title}</li>
-                                                    }else{
-                                                        return <li onClick={()=>changeQuiz(quiz)} className={'badge badge-secondary'}
-                                                                   key={quiz.id}>{quiz.title}</li>
-                                                    }
                                                 })
                                             }
                                         </ul>

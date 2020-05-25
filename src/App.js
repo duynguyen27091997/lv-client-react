@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Header from './partials/Header';
 import routes from "./routes";
 import './App.css';
