@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
-import {Button, Form, Row} from "react-bootstrap";
+import {Button, Form, Modal, Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import './scss/Aside.scss'
 import TestBar from "../components/aside/TestBar";
@@ -11,6 +11,7 @@ import swal from 'sweetalert';
 import {AxiosBe} from "../utils/axios";
 import Editor from "../editor/Editor";
 import {toTime} from "../helpers/helpers";
+import qs from 'querystring';
 
 const Test = () => {
     const course = useSelector(state => state.course.course);
@@ -19,6 +20,7 @@ const Test = () => {
     const [test, setTest] = useState(null);
     const [expire, setExpire] = useState(false);
     const [assessmentAnswer, setAssessmentAnswer] = useState(null);
+    const [showResult, setShowResult] = useState(false);
 
     const handleChangeCode = (item, code) => {
         if (assessmentAnswer) {
@@ -79,31 +81,67 @@ const Test = () => {
             }).then(r => {
                 if (r) {
                     setExpire(true);
-                    console.table({
+                    let payload = {
                         userId: user.id,
                         assessmentId: test.id,
                         courseId: course.id,
                         time: test.total - test.duration,
                         data: assessmentAnswer
-                    })
+                    }
+                    AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
+                        .then(({data: res}) => {
+                            if (res.success) {
+                                setShowResult(true)
+                                reset()
+                            }
+                        })
+                        .catch(err => {
+                            swal({
+                                title: "Có lỗi xảy ra ,vui lòng thử lại",
+                                icon: 'error',
+                                timer: 1500,
+                                button: false
+                            }).then()
+                        })
+
                 }
             })
-        else{
+        else {
             swal({
                 title: "Đã hết giờ làm bài",
                 icon: "info",
                 buttons: false,
-                timer:1500
+                timer: 1500
             }).then(r => r)
             setExpire(true);
-            console.table({
+            let payload = {
                 userId: user.id,
                 assessmentId: test.id,
                 courseId: course.id,
                 time: test.total - test.duration,
                 data: assessmentAnswer
-            })
+            };
+            AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
+                .then(({data: res}) => {
+                    if (res.success) {
+                        setShowResult(true)
+                        reset()
+                    }
+                })
+                .catch(err => {
+                    swal({
+                        title: "Có lỗi xảy ra ,vui lòng thử lại",
+                        icon: 'error',
+                        timer: 1500,
+                        button: false
+                    }).then()
+                })
+
         }
+    }
+
+    function reset() {
+        setAssessment(null)
     }
 
     useEffect(_ => {
@@ -116,6 +154,8 @@ const Test = () => {
                 else {
                     handleSubmit()
                 }
+            else
+                setTest(null)
         }
         // eslint-disable-next-line
     }, [test, expire])
@@ -189,48 +229,52 @@ const Test = () => {
                             </Col>
 
                     }
-                    {/* <Modal show={true} dialogClassName="modal-300w">*/}
-                    {/*    <Modal.Header closeButton>*/}
-                    {/*        <Modal.Title>*/}
-                    {/*            <h1 className={'title mb-0'}>Kết quả</h1>*/}
-                    {/*        </Modal.Title>*/}
-                    {/*    </Modal.Header>*/}
-                    {/*    <Modal.Body>*/}
-                    {/*        <div className={"d-flex flex-column"} style={{width:'200px',margin:'0 auto'}}>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 1</div>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 2</div>*/}
-                    {/*            <div className="btn btn-danger mb-2">Câu 3</div>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 4</div>*/}
-                    {/*            <div className="btn btn-danger mb-2">Câu 5</div>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 6</div>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 7</div>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 8</div>*/}
-                    {/*            <div className="btn btn-danger mb-2">Câu 9</div>*/}
-                    {/*            <div className="btn btn-success mb-2">Câu 10</div>*/}
-                    {/*        </div>*/}
-                    {/*        <div className={"mt-5"}>*/}
-                    {/*            <div className="btn btn-info mb-2 w-100" >Xác Nhận</div>*/}
-                    {/*        </div>*/}
-                    {/*    </Modal.Body>*/}
-                    {/*</Modal>*/}
+                    <Modal show={showResult} onHide={() => setShowResult(false)} dialogClassName="modal-300w">
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                <h1 className={'title mb-0'}>Kết quả</h1>
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <h6 className={'text-center mb-4'}>Thời gian làm bài : (45s)</h6>
+                            <div className={"d-flex flex-column"} style={{width: '200px', margin: '0 auto'}}>
+                                <div className="btn btn-success mb-2">Câu 1</div>
+                                <div className="btn btn-success mb-2">Câu 2</div>
+                                <div className="btn btn-danger mb-2">Câu 3</div>
+                                <div className="btn btn-success mb-2">Câu 4</div>
+                                <div className="btn btn-danger mb-2">Câu 5</div>
+                                <div className="btn btn-success mb-2">Câu 6</div>
+                                <div className="btn btn-success mb-2">Câu 7</div>
+                                <div className="btn btn-success mb-2">Câu 8</div>
+                                <div className="btn btn-danger mb-2">Câu 9</div>
+                                <div className="btn btn-success mb-2">Câu 10</div>
+                            </div>
+                            <div className={"mt-5"}>
+                                <div onClick={() => setShowResult(false)} className="btn btn-info mb-2 w-100">Xác Nhận
+                                </div>
+                            </div>
+                        </Modal.Body>
+                    </Modal>
                 </Row>
                 {
-                    test &&
-                    <div className={'test__bottom'}>
-                        <Row>
-                            <Col>
-                                <div className={'d-flex justify-content-center align-items-center'}
-                                     style={{height: 50}}>
-                                    <span className={"mr-3"}>Thời gian còn lại : </span>
-                                    <div className={'test__bar'}>
+                    test ?
+                        <div className={'test__bottom'}>
+                            <Row>
+                                <Col>
+                                    <div className={'d-flex justify-content-center align-items-center'}
+                                         style={{height: 50}}>
+                                        <span className={"mr-3"}>Thời gian còn lại : </span>
+                                        <div className={'test__bar'}>
                                         <span className={'test__bar__process'}
                                               style={{width: (test.duration / test.total) * 100 + '%'}}/>
+                                        </div>
+                                        <span className={"ml-3"}>{toTime(test.duration)}</span>
                                     </div>
-                                    <span className={"ml-3"}>{toTime(test.duration)}</span>
-                                </div>
-                            </Col>
-                        </Row>
-                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+                        :
+                        null
                 }
             </Container>
         );

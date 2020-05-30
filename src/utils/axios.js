@@ -18,5 +18,5 @@ axios.interceptors.response.use(
 );
 
 export const AxiosBe = axios.create({
-    baseURL: 'http://127.0.0.1:3030',
+    baseURL: 'http://api.smallcode.info',
 });
