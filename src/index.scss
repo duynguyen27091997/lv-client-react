@@ -168,8 +168,10 @@ input {
   }
 }
 .user__dropdown{
+  left: unset!important;
   ul{
     li{
+      white-space: nowrap;
       border-bottom: 1px solid #dedede;
     }
   }
