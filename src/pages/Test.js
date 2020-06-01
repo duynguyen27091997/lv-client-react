@@ -86,7 +86,7 @@ const Test = () => {
                         assessmentId: test.id,
                         courseId: course.id,
                         time: test.total - test.duration,
-                        data: assessmentAnswer
+                        data: JSON.stringify(assessmentAnswer)
                     }
                     AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
                         .then(({data: res}) => {
@@ -119,7 +119,7 @@ const Test = () => {
                 assessmentId: test.id,
                 courseId: course.id,
                 time: test.total - test.duration,
-                data: assessmentAnswer
+                data: JSON.stringify(assessmentAnswer)
             };
             AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
                 .then(({data: res}) => {
