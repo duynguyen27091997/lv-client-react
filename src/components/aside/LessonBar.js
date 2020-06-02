@@ -79,7 +79,7 @@ const LessonBar = ({current, changeQuiz}) => {
                                     <Accordion.Collapse eventKey={level.order}>
                                         <ul>
                                             {
-                                                (level.items).map(quiz => {
+                                                (level.items).map((quiz,index) => {
                                                         if (quiz.id === current.id) {
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-info'}
@@ -88,6 +88,10 @@ const LessonBar = ({current, changeQuiz}) => {
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-success'}
                                                                        key={quiz.id}>{quiz.title} <i className="las la-check"/></li>
+                                                        else if (index===lessons.filter(quiz => quiz.members.length).length)
+                                                            return <li onClick={() => changeQuiz(quiz)}
+                                                                       className={'badge badge-secondary'}
+                                                                       key={quiz.id}>{quiz.title}</li>
                                                         else
                                                             return <li onClick={() => handleReject()}
                                                                        className={'badge badge-secondary'}
