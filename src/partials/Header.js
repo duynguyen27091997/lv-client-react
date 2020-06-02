@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, forwardRef , useImperativeHandle } from 'react';
 import {Container, Navbar, Row, Col} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import './Header.scss';
@@ -9,7 +9,15 @@ import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import User from "../components/user/User";
 import ModalForgotPass from "../components/modal/ModalForgotPass";
-const Header = (props) => {
+
+const Header = forwardRef((props,ref) => {
+
+    useImperativeHandle(ref, () => ({
+        toggle() {
+            setLogin(!login);
+        }
+
+    }));
     const [showForgotPass, setShowForgotPass] = useState(false);
     const [login, setLogin] = useState(false);
     const [register, setRegister] = useState(false);
@@ -74,6 +82,6 @@ const Header = (props) => {
             </Container>
         </div>
     )
-}
+})
 
 export default Header;
