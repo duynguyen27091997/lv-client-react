@@ -48,8 +48,9 @@ const Test = () => {
                         if (res.success) {
                             setAssessment(res.data)
                             setTest({...res.assessment, total: res.assessment.duration});
-                            setAssessmentAnswer(res.data.map(item => {
+                            setAssessmentAnswer(res.data.map((item,index) => {
                                 return {
+                                    index:index,
                                     id: item.id,
                                     kindChallengeId: item.kindChallengeId,
                                     code: item.code,
