@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import Header from './partials/Header';
 import routes from "./routes";
 import './App.css';
@@ -11,14 +11,16 @@ import Home from "./pages/Home";
 import ActiveEmail from "./pages/ActiveEmail";
 
 function App() {
+    const headerRef = useRef();
+
     const routeComponents = routes.map((route, key) => <RouteWithSubRoutes{...route} key={key} />);
     return (
         <Startup className="App">
-            <Header/>
+            <Header ref={headerRef}/>
             <Switch>
                 {routeComponents}
                 <Route path={'/active'} component={()=><ActiveEmail/>}/>
-                <Route path={'/'} component={()=><Home/>}/>
+                <Route path={'/'} component={()=><Home onClick={()=>headerRef.current.toggle()}/>}/>
             </Switch>
             <Footer/>
         </Startup>

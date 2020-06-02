@@ -9,8 +9,12 @@ import imgKiemTra from '../assets/img/home/coding.png';
 import imgMienPhi from '../assets/img/home/computer.png';
 import {AxiosBe} from "../utils/axios";
 import CountUp from "react-countup";
+import {useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
 
 const Home = (props) => {
+    const user = useSelector(state => state.main.user);
+    const history = useHistory();
     const [counts, setCounts] = useState([]);
     useEffect(_ => {
         if (!counts.length)
@@ -45,6 +49,15 @@ const Home = (props) => {
 
     ];
 
+    const handleClick  = ()=>{
+        if (user){
+            history.push('/courses')
+        }else{
+            console.log("aaa")
+            props.onClick()
+        }
+    }
+
     return (
         <div className={'Home'}>
             <div className={'Home__Banner'}>
@@ -71,7 +84,7 @@ const Home = (props) => {
                     <Row>
                         {
                             counts.length ? counts.map((count, index) => <Col className={"my-5"} key={index}>
-                                <div className={'count-up'}>
+                                <div className={'count-up'} onClick={handleClick}>
                                     <h2><CountUp delay={0.5} end={count.count} duration={5}/></h2>
                                     <h5>{count.title}</h5>
                                 </div>
@@ -87,7 +100,7 @@ const Home = (props) => {
                         <div className={'card-deck'}>
                             {
                                 list.slice(0, 2).map((article, index) => {
-                                    return <Col key={index}><ArticleIntro article={article} /></Col>
+                                    return <Col key={index}><ArticleIntro onClick={handleClick} article={article} /></Col>
                                 })
                             }
                         </div>
@@ -96,7 +109,7 @@ const Home = (props) => {
                         <div className={'card-deck'}>
                             {
                                 list.slice(2, 4).map((article, index) => {
-                                    return <Col key={index}><ArticleIntro article={article} /></Col>
+                                    return <Col key={index}><ArticleIntro onClick={handleClick} article={article} /></Col>
                                 })
                             }
                         </div>
