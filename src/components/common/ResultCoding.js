@@ -4,7 +4,7 @@ const ResultCoding = (props) => {
     return (
         <div>
             <h5>Kết quả</h5>
-            <div className={'result-coding'}>
+            <div className={'result-coding'} style={{maxHeight:1000}}>
                 <div className={'Code__Result text-left mt-4'}>
                     {/*<div className="alert alert-success" role="alert">*/}
                     {/*    Hoan hô ! Bạn đã trả lời chính xác !*/}
