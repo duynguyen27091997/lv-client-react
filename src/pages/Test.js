@@ -13,11 +13,13 @@ import Editor from "../editor/Editor";
 import {toTime} from "../helpers/helpers";
 import qs from 'querystring';
 import Loading from "../components/common/Loading";
+import PageLoading from "../components/common/PageLoading";
 
 const Test = () => {
     const course = useSelector(state => state.course.course);
     const user = useSelector(state => state.main.user);
     const [assessment, setAssessment] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [test, setTest] = useState(null);
     const [expire, setExpire] = useState(false);
     const [assessmentAnswer, setAssessmentAnswer] = useState(null);
@@ -40,7 +42,7 @@ const Test = () => {
     };
     const handleStart = () => {
         setExpire(false);
-        if (parseInt(assessmentInfo.attemptNumber) > 3) {
+        if (parseInt(assessmentInfo.attemptNumber) >= 3) {
             swal({
                 title: "Bạn đã vượt quá số lần làm bài (tối đa 3 lần)",
                 icon: "warning",
@@ -56,6 +58,7 @@ const Test = () => {
                 dangerMode: true,
             }).then(r => {
                 if (r)
+                    setLoading(true);
                     AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
                         .then(({data: res}) => {
                             if (res.success) {
@@ -83,6 +86,9 @@ const Test = () => {
                         .catch(err => {
                             console.log(err)
                         })
+                        .finally(_=>{
+                            setLoading(false);
+                        })
             })
     }
     const submit = (payload) => {
@@ -103,6 +109,9 @@ const Test = () => {
                     button: false
                 }).then()
             })
+            .finally(_=>{
+                setLoading(false);
+            })
     }
     const handleSubmit = () => {
         if (test)
@@ -114,6 +123,7 @@ const Test = () => {
             }).then(r => {
                 if (r) {
                     setExpire(true);
+                    setLoading(true);
                     let payload = {
                         userId: user.id,
                         assessmentId: test.id,
@@ -132,6 +142,7 @@ const Test = () => {
                 timer: 1500
             }).then(r => r)
             setExpire(true);
+            setLoading(true);
             let payload = {
                 userId: user.id,
                 assessmentId: test.id,
@@ -159,6 +170,12 @@ const Test = () => {
                 .then(({data: res}) => {
                     if (res.success)
                         setAssessmentInfo(res.AS);
+                    else {
+                        setAssessmentInfo({error:true})
+                    }
+                })
+                .catch(err=>{
+                    setAssessmentInfo({error:true})
                 })
     }, [course, user]);
 
@@ -181,10 +198,12 @@ const Test = () => {
     if (course)
         return (
             <Container fluid={true} className={'Content'}>
+                {loading && <PageLoading/>}
                 <Row>
                     <Col className={'Aside__Tool'} xs={3}>
                         {assessmentInfo ?
-                            <TestBar info={assessmentInfo} startTest={handleStart} assessment={assessment}/> :
+                            !assessmentInfo.error ?
+                            <TestBar info={assessmentInfo} startTest={handleStart} assessment={assessment}/>: <h5 className={'mt-5 text-danger'}>Bài kiểm tra của khoá học chưa được tạo !</h5> :
                             <Loading/>}
                     </Col>
                     <Col xs={3}/>

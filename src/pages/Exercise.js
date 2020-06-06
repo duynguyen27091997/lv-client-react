@@ -14,6 +14,7 @@ import {setExercises} from "../actions/courseActions";
 import ResultCoding from "../components/common/ResultCoding";
 import swal from "sweetalert";
 import qs from "querystring";
+import PageLoading from "../components/common/PageLoading";
 
 const Exercise = () => {
     const user = useSelector(state => state.main.user);
@@ -21,13 +22,13 @@ const Exercise = () => {
     const exercises = useSelector(state => state.course.exercises);
 
     const dispatch = useDispatch();
-
+    const [loading, setLoading] = useState(false)
     const [code, setCode] = useState('')
     const [err, setErr] = useState('')
     const [quiz, setQuiz] = useState(null);
-    useEffect(_=>{
+    useEffect(_ => {
         setErr('')
-    },[quiz]);
+    }, [quiz]);
     useEffect(_ => {
         if (course && !exercises)
             AxiosBe.get(`/api/coding?courseId=${course.id}&userId=${user.id}`)
@@ -56,6 +57,7 @@ const Exercise = () => {
                 button: false
             }).then(r => r)
         } else {
+            setLoading(true);
             let payload = {
                 id: quiz.id,
                 code: code,
@@ -85,7 +87,11 @@ const Exercise = () => {
                             .catch(err => {
                                 dispatch(setExercises([]))
                             })
+                            .finally(_ => {
+                                setLoading(false);
+                            })
                     } else {
+                        setLoading(false)
                         if (res.dataErr) {
                             setErr(res.dataErr)
                         } else
@@ -98,7 +104,7 @@ const Exercise = () => {
                     }
                 })
                 .catch(err => {
-                    console.log(err)
+                    setLoading(false)
                     swal({
                         title: "Có lỗi xảy ra  trong quá trình xử lí",
                         icon: 'error',
@@ -112,6 +118,7 @@ const Exercise = () => {
     if (course) {
         return (
             <Container fluid={true} className={'Content'}>
+                {loading && <PageLoading/>}
                 {
                     exercises ?
                         <Row>
