@@ -64,6 +64,7 @@ const Lesson = () => {
             AxiosBe.post(`/api/submit/${user.id}`, qs.stringify(payload))
                 .then(({data: res}) => {
                     if (res.success) {
+                        setAnswer('');
                         swal({
                             title: res.message,
                             icon: 'success',
@@ -102,7 +103,6 @@ const Lesson = () => {
                     }).then(r => r)
                 })
         }
-        setAnswer('')
     }
 
     if (course) {

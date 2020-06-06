@@ -12,6 +12,7 @@ import {AxiosBe} from "../utils/axios";
 import Editor from "../editor/Editor";
 import {toTime} from "../helpers/helpers";
 import qs from 'querystring';
+import Loading from "../components/common/Loading";
 
 const Test = () => {
     const course = useSelector(state => state.course.course);
@@ -20,6 +21,8 @@ const Test = () => {
     const [test, setTest] = useState(null);
     const [expire, setExpire] = useState(false);
     const [assessmentAnswer, setAssessmentAnswer] = useState(null);
+    const [assessmentInfo, setAssessmentInfo] = useState(null);
+    const [assessmentResult, setAssessmentResult] = useState(null);
     const [showResult, setShowResult] = useState(false);
 
     const handleChangeCode = (item, code) => {
@@ -36,44 +39,73 @@ const Test = () => {
         }
     };
     const handleStart = () => {
-        swal({
-            title: "Bắt đầu làm bài ?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then(r => {
-            if (r)
-                AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
-                    .then(({data: res}) => {
-                        if (res.success) {
-                            setAssessment(res.data)
-                            setTest({...res.assessment, total: res.assessment.duration});
-                            setAssessmentAnswer(res.data.map((item,index) => {
-                                return {
-                                    index:index,
-                                    id: item.id,
-                                    kindChallengeId: item.kindChallengeId,
-                                    code: item.code,
-                                    answer: ''
-                                }
-                            }))
-                            window.scrollTo(0, 0);
-                        } else {
-                            swal({
-                                title: "Hiện tại chưa có đề thi nào !",
-                                icon: "error",
-                                buttons: false,
-                                timer: 1500
-                            }).then(r => r)
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-        })
+        setExpire(false);
+        if (parseInt(assessmentInfo.attemptNumber) > 3) {
+            swal({
+                title: "Bạn đã vượt quá số lần làm bài (tối đa 3 lần)",
+                icon: "warning",
+                buttons: false,
+                timer: 1500,
+                dangerMode: true,
+            }).then()
+        } else
+            swal({
+                title: "Bắt đầu làm bài ?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(r => {
+                if (r)
+                    AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
+                        .then(({data: res}) => {
+                            if (res.success) {
+                                setAssessment(res.data)
+                                setTest({...res.assessment, total: res.assessment.duration});
+                                setAssessmentAnswer(res.data.map((item, index) => {
+                                    return {
+                                        index: index,
+                                        id: item.id,
+                                        kindChallengeId: item.kindChallengeId,
+                                        code: item.code,
+                                        answer: ''
+                                    }
+                                }))
+                                window.scrollTo(0, 0);
+                            } else {
+                                swal({
+                                    title: "Hiện tại chưa có đề thi nào !",
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1500
+                                }).then(r => r)
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+            })
+    }
+    const submit = (payload) => {
+        AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
+            .then(({data: res}) => {
+                if (res.success) {
+                    setShowResult(true)
+                    setAssessmentInfo(res.AS);
+                    setAssessmentResult({results: res.data, time: res.time})
+                    reset()
+                }
+            })
+            .catch(err => {
+                swal({
+                    title: "Có lỗi xảy ra ,vui lòng thử lại",
+                    icon: 'error',
+                    timer: 1500,
+                    button: false
+                }).then()
+            })
     }
     const handleSubmit = () => {
-        if (test.total - test.duration)
+        if (test)
             swal({
                 title: "Nộp bài ?",
                 icon: "info",
@@ -89,22 +121,7 @@ const Test = () => {
                         time: test.total - test.duration,
                         data: JSON.stringify(assessmentAnswer)
                     }
-                    AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
-                        .then(({data: res}) => {
-                            if (res.success) {
-                                setShowResult(true)
-                                reset()
-                            }
-                        })
-                        .catch(err => {
-                            swal({
-                                title: "Có lỗi xảy ra ,vui lòng thử lại",
-                                icon: 'error',
-                                timer: 1500,
-                                button: false
-                            }).then()
-                        })
-
+                    submit(payload);
                 }
             })
         else {
@@ -122,21 +139,7 @@ const Test = () => {
                 time: test.total - test.duration,
                 data: JSON.stringify(assessmentAnswer)
             };
-            AxiosBe.post('/api/submitAssessment', qs.stringify(payload))
-                .then(({data: res}) => {
-                    if (res.success) {
-                        setShowResult(true)
-                        reset()
-                    }
-                })
-                .catch(err => {
-                    swal({
-                        title: "Có lỗi xảy ra ,vui lòng thử lại",
-                        icon: 'error',
-                        timer: 1500,
-                        button: false
-                    }).then()
-                })
+            submit(payload)
 
         }
     }
@@ -144,6 +147,20 @@ const Test = () => {
     function reset() {
         setAssessment(null)
     }
+
+    function hideResult() {
+        setShowResult(false);
+        setAssessmentResult(null);
+    }
+
+    useEffect(_ => {
+        if (course && user)
+            AxiosBe.get(`/api/assessment/${course.id}/${user.id}`)
+                .then(({data: res}) => {
+                    if (res.success)
+                        setAssessmentInfo(res.AS);
+                })
+    }, [course, user]);
 
     useEffect(_ => {
         if (test) {
@@ -166,7 +183,9 @@ const Test = () => {
             <Container fluid={true} className={'Content'}>
                 <Row>
                     <Col className={'Aside__Tool'} xs={3}>
-                        <TestBar startTest={handleStart} assessment={assessment}/>
+                        {assessmentInfo ?
+                            <TestBar info={assessmentInfo} startTest={handleStart} assessment={assessment}/> :
+                            <Loading/>}
                     </Col>
                     <Col xs={3}/>
                     {
@@ -230,30 +249,33 @@ const Test = () => {
                             </Col>
 
                     }
-                    <Modal show={showResult} onHide={() => setShowResult(false)} dialogClassName="modal-300w">
+                    <Modal show={showResult} onHide={() => hideResult()} dialogClassName="modal-400w">
                         <Modal.Header closeButton>
                             <Modal.Title>
                                 <h1 className={'title mb-0'}>Kết quả</h1>
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <h6 className={'text-center mb-4'}>Thời gian làm bài : (45s)</h6>
-                            <div className={"d-flex flex-column"} style={{width: '200px', margin: '0 auto'}}>
-                                <div className="btn btn-success mb-2">Câu 1</div>
-                                <div className="btn btn-success mb-2">Câu 2</div>
-                                <div className="btn btn-danger mb-2">Câu 3</div>
-                                <div className="btn btn-success mb-2">Câu 4</div>
-                                <div className="btn btn-danger mb-2">Câu 5</div>
-                                <div className="btn btn-success mb-2">Câu 6</div>
-                                <div className="btn btn-success mb-2">Câu 7</div>
-                                <div className="btn btn-success mb-2">Câu 8</div>
-                                <div className="btn btn-danger mb-2">Câu 9</div>
-                                <div className="btn btn-success mb-2">Câu 10</div>
-                            </div>
-                            <div className={"mt-5"}>
-                                <div onClick={() => setShowResult(false)} className="btn btn-info mb-2 w-100">Xác Nhận
+                            {assessmentResult && <div>
+                                <h6 className={'text-center mb-4'}>Thời gian làm bài : ({assessmentResult.time})</h6>
+                                <div className={"d-flex flex-column"} style={{width: '300px', margin: '0 auto'}}>
+                                    {
+                                        assessmentResult.results.map(result => {
+                                            if (result.answer)
+                                                return <div key={result.index}
+                                                            className="btn btn-success mb-2">Câu {result.index + 1}</div>
+                                            else
+                                                return <div key={result.index}
+                                                            className="btn btn-danger mb-2">Câu {result.index + 1}</div>
+                                        })
+                                    }
                                 </div>
-                            </div>
+                                <div className={"mt-5"}>
+                                    <div onClick={() => hideResult()} className="btn btn-info mb-2 w-100">Xác
+                                        Nhận
+                                    </div>
+                                </div>
+                            </div>}
                         </Modal.Body>
                     </Modal>
                 </Row>
