@@ -14,6 +14,7 @@ import {AxiosBe} from "../utils/axios";
 import { setLessons} from "../actions/courseActions";
 import swal from "sweetalert";
 import qs from 'querystring';
+import PageLoading from "../components/common/PageLoading";
 
 const Lesson = () => {
 
@@ -22,6 +23,7 @@ const Lesson = () => {
     const lessons = useSelector(state => state.course.lessons);
 
     const [code, setCode] = useState('')
+    const [loading, setLoading] = useState(false)
     const [answer, setAnswer] = useState('')
     const [quiz, setQuiz] = useState(null);
 
@@ -54,6 +56,7 @@ const Lesson = () => {
                 button: false
             }).then(r => r)
         } else {
+            setLoading(true);
             let payload = {
                 id: quiz.id,
                 result: answer,
@@ -102,12 +105,16 @@ const Lesson = () => {
                         button: false
                     }).then(r => r)
                 })
+                .finally(_=>{
+                    setLoading(false)
+                })
         }
     }
 
     if (course) {
         return (
             <Container fluid={true} className={'Content'}>
+                {loading && <PageLoading/>}
                 {
                     lessons ?
                         <Row>
