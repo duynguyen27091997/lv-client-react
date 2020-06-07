@@ -19,9 +19,9 @@ const Hint = ({tutorial}) => {
                     </div>
                     <Collapse in={open}>
                         <div id="example-collapse-text" >
-                            <div className={'hint-content'}>
+                            <pre className={'hint-content'}>
                                 {tutorial}
-                            </div>
+                            </pre>
                         </div>
                     </Collapse>
                 </div>
