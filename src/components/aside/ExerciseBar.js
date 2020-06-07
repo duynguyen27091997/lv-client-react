@@ -53,7 +53,7 @@ const ExerciseBar = ({current,changeQuiz}) => {
             </div>
             <div className={'Aside__List'}>
                 {current && <Accordion activeKey={key}>
-                    <div className={'text-left'}>
+                    <div className={''}>
                         {
                             exercises.map(quiz =>
                             {

@@ -324,13 +324,14 @@ input {
 .exercise{
   text-align: left!important;
   display: block;
-  max-width: 250px;
+  max-width: initial!important;
+  font-size: 16px!important;
+  margin: 5px auto;
   text-overflow: ellipsis;
   overflow: hidden;
   position: relative;
   padding: 15px 30px 15px 20px !important;
   cursor: pointer;
-  margin: 3px;
   i{
     position: absolute;
     top: 50%;
