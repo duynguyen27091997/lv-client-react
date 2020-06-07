@@ -59,36 +59,36 @@ const Test = () => {
             }).then(r => {
                 if (r)
                     setLoading(true);
-                    AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
-                        .then(({data: res}) => {
-                            if (res.success) {
-                                setAssessment(res.data)
-                                setTest({...res.assessment, total: res.assessment.duration});
-                                setAssessmentAnswer(res.data.map((item, index) => {
-                                    return {
-                                        index: index,
-                                        id: item.id,
-                                        kindChallengeId: item.kindChallengeId,
-                                        code: item.code,
-                                        answer: ''
-                                    }
-                                }))
-                                window.scrollTo(0, 0);
-                            } else {
-                                swal({
-                                    title: "Hiện tại chưa có đề thi nào !",
-                                    icon: "error",
-                                    buttons: false,
-                                    timer: 1500
-                                }).then(r => r)
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                        .finally(_=>{
-                            setLoading(false);
-                        })
+                AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
+                    .then(({data: res}) => {
+                        if (res.success) {
+                            setAssessment(res.data)
+                            setTest({...res.assessment, total: res.assessment.duration});
+                            setAssessmentAnswer(res.data.map((item, index) => {
+                                return {
+                                    index: index,
+                                    id: item.id,
+                                    kindChallengeId: item.kindChallengeId,
+                                    code: item.code,
+                                    answer: ''
+                                }
+                            }))
+                            window.scrollTo(0, 0);
+                        } else {
+                            swal({
+                                title: "Hiện tại chưa có đề thi nào !",
+                                icon: "error",
+                                buttons: false,
+                                timer: 1500
+                            }).then(r => r)
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                    .finally(_ => {
+                        setLoading(false);
+                    })
             })
     }
     const submit = (payload) => {
@@ -109,7 +109,7 @@ const Test = () => {
                     button: false
                 }).then()
             })
-            .finally(_=>{
+            .finally(_ => {
                 setLoading(false);
             })
     }
@@ -171,11 +171,11 @@ const Test = () => {
                     if (res.success)
                         setAssessmentInfo(res.AS);
                     else {
-                        setAssessmentInfo({error:true})
+                        setAssessmentInfo({error: true})
                     }
                 })
-                .catch(err=>{
-                    setAssessmentInfo({error:true})
+                .catch(err => {
+                    setAssessmentInfo({error: true})
                 })
     }, [course, user]);
 
@@ -203,7 +203,8 @@ const Test = () => {
                     <Col className={'Aside__Tool'} xs={3}>
                         {assessmentInfo ?
                             !assessmentInfo.error ?
-                            <TestBar info={assessmentInfo} startTest={handleStart} assessment={assessment}/>: <h5 className={'mt-5 text-danger'}>Bài kiểm tra của khoá học chưa được tạo !</h5> :
+                                <TestBar info={assessmentInfo} startTest={handleStart} assessment={assessment}/> :
+                                <h5 className={'mt-5 text-danger'}>Bài kiểm tra của khoá học chưa được tạo !</h5> :
                             <Loading/>}
                     </Col>
                     <Col xs={3}/>
@@ -279,7 +280,7 @@ const Test = () => {
                                 <h6 className={'text-center mb-4'}>Thời gian làm bài : ({assessmentResult.time})</h6>
                                 <div className={"d-flex flex-column"} style={{width: '300px', margin: '0 auto'}}>
                                     {
-                                        assessmentResult.results.map(result => {
+                                        assessmentResult.results.sort((a, b) => a.index - b.index).map(result => {
                                             if (result.answer)
                                                 return <div key={result.index}
                                                             className="btn btn-success mb-2">Câu {result.index + 1}</div>
