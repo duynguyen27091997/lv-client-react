@@ -180,17 +180,22 @@ const Test = () => {
     }, [course, user]);
 
     useEffect(_ => {
+        let timer = null;
         if (test) {
             if (!expire)
                 if (test.duration !== 0)
-                    setTimeout(_ => {
+                    timer = setTimeout(_ => {
                         setTest({...test, duration: test.duration - 1})
                     }, 1000)
                 else {
                     handleSubmit()
                 }
-            else
+            else {
                 setTest(null)
+            }
+        }
+        return function cleanup() {
+            clearTimeout(timer);
         }
         // eslint-disable-next-line
     }, [test, expire])
