@@ -55,34 +55,51 @@ const ExerciseBar = ({current,changeQuiz}) => {
                 {current && <Accordion activeKey={key}>
                     <div className={'text-left'}>
                         {
-                            Array.from(listObject).map(level =>
-                                <div key={level.order} className={"object object-exercise mb-3"}>
-                                    <Accordion.Toggle as={'div'} eventKey={level.order}>
-                                        <div onClick={_=>setKey(level.order)} className={'btn btn-primary'}>Bài {level.order}</div>
-                                    </Accordion.Toggle>
-                                    <Accordion.Collapse eventKey={level.order}>
-                                        <ul>
-                                            {
-                                                level.items.map(quiz =>
-                                                {
-                                                    if (quiz.id === current.id) {
-                                                        return <li onClick={() => changeQuiz(quiz)}
-                                                                   className={'badge badge-info'}
-                                                                   key={quiz.id}>{quiz.title} <i className="las la-play"/></li>
-                                                    } else if (quiz.members.length)
-                                                        return <li onClick={() => changeQuiz(quiz)}
-                                                                   className={'badge badge-success'}
-                                                                   key={quiz.id}>{quiz.title} <i className="las la-check"/></li>
-                                                    else
-                                                        return <li onClick={() => changeQuiz(quiz)}
-                                                                   className={'badge badge-secondary'}
-                                                                   key={quiz.id}>{quiz.title}</li>
-                                                })
-                                            }
-                                        </ul>
-                                    </Accordion.Collapse>
-                                </div>)
+                            exercises.map(quiz =>
+                            {
+                                if (quiz.id === current.id) {
+                                    return <li onClick={() => changeQuiz(quiz)}
+                                               className={'exercise d-block badge badge-info'}
+                                               key={quiz.id}>{quiz.title} <i className="las la-play"/></li>
+                                } else if (quiz.members.length)
+                                    return <li onClick={() => changeQuiz(quiz)}
+                                               className={'exercise d-block badge badge-success'}
+                                               key={quiz.id}>{quiz.title} <i className="las la-check"/></li>
+                                else
+                                    return <li onClick={() => changeQuiz(quiz)}
+                                               className={'exercise d-block badge badge-secondary'}
+                                               key={quiz.id}>{quiz.title}</li>
+                            })
                         }
+                        {/*{*/}
+                        {/*    Array.from(listObject).map(level =>*/}
+                        {/*        <div key={level.order} className={"object object-exercise mb-3"}>*/}
+                        {/*            <Accordion.Toggle as={'div'} eventKey={level.order}>*/}
+                        {/*                <div onClick={_=>setKey(level.order)} className={'btn btn-primary'}>Bài {level.order}</div>*/}
+                        {/*            </Accordion.Toggle>*/}
+                        {/*            <Accordion.Collapse eventKey={level.order}>*/}
+                        {/*                <ul>*/}
+                        {/*                    {*/}
+                        {/*                        level.items.map(quiz =>*/}
+                        {/*                        {*/}
+                        {/*                            if (quiz.id === current.id) {*/}
+                        {/*                                return <li onClick={() => changeQuiz(quiz)}*/}
+                        {/*                                           className={'badge badge-info'}*/}
+                        {/*                                           key={quiz.id}>{quiz.title} <i className="las la-play"/></li>*/}
+                        {/*                            } else if (quiz.members.length)*/}
+                        {/*                                return <li onClick={() => changeQuiz(quiz)}*/}
+                        {/*                                           className={'badge badge-success'}*/}
+                        {/*                                           key={quiz.id}>{quiz.title} <i className="las la-check"/></li>*/}
+                        {/*                            else*/}
+                        {/*                                return <li onClick={() => changeQuiz(quiz)}*/}
+                        {/*                                           className={'badge badge-secondary'}*/}
+                        {/*                                           key={quiz.id}>{quiz.title}</li>*/}
+                        {/*                        })*/}
+                        {/*                    }*/}
+                        {/*                </ul>*/}
+                        {/*            </Accordion.Collapse>*/}
+                        {/*        </div>)*/}
+                        {/*}*/}
                     </div>
                 </Accordion>}
             </div>

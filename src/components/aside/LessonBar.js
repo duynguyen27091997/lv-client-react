@@ -83,19 +83,19 @@ const LessonBar = ({current, changeQuiz}) => {
                                                         if (quiz.id === current.id) {
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-info'}
-                                                                       key={quiz.id}>{quiz.title} <i className="las la-play"/></li>
+                                                                       key={quiz.id}>Câu {level.order+'.'+(index+1)} <i className="las la-play"/></li>
                                                         } else if (quiz.members.length)
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-success'}
-                                                                       key={quiz.id}>{quiz.title} <i className="las la-check"/></li>
-                                                        else if (index===lessons.filter(quiz => quiz.members.length).length)
+                                                                       key={quiz.id}>Câu {level.order+'.'+(index+1)} <i className="las la-check"/></li>
+                                                        else if (quiz.id===lessons[lessons.filter(quiz => quiz.members.length).length].id)
                                                             return <li onClick={() => changeQuiz(quiz)}
                                                                        className={'badge badge-secondary'}
-                                                                       key={quiz.id}>{quiz.title}</li>
+                                                                       key={quiz.id}>Câu {level.order+'.'+(index+1)} </li>
                                                         else
                                                             return <li onClick={() => handleReject()}
                                                                        className={'badge badge-secondary'}
-                                                                       key={quiz.id}>{quiz.title}</li>
+                                                                       key={quiz.id}>Câu {level.order+'.'+(index+1)} </li>
                                                     }
                                                 )
                                             }

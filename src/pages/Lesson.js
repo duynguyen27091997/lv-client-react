@@ -11,7 +11,7 @@ import {Redirect} from "react-router-dom";
 import wrapperTool from "../components/hoc/wrapperTool";
 import {useDispatch, useSelector} from "react-redux";
 import {AxiosBe} from "../utils/axios";
-import { setLessons} from "../actions/courseActions";
+import {setLessons} from "../actions/courseActions";
 import swal from "sweetalert";
 import qs from 'querystring';
 import PageLoading from "../components/common/PageLoading";
@@ -34,8 +34,8 @@ const Lesson = () => {
             AxiosBe.get(`/api/lesson?courseId=${course.id}&userId=${user.id}`)
                 .then(({data: res}) => {
                     const lessons = res.data.sort((a, b) => {
-                        if (a.levelId === b.levelId){
-                           return a.sequenceNumber - b.sequenceNumber
+                        if (a.levelId === b.levelId) {
+                            return a.sequenceNumber - b.sequenceNumber
                         }
                         return a.levelId - b.levelId
                     })
@@ -77,7 +77,7 @@ const Lesson = () => {
                         AxiosBe.get(`/api/lesson?courseId=${course.id}&userId=${user.id}`)
                             .then(({data: res}) => {
                                 const lessons = res.data.sort((a, b) => {
-                                    if (a.levelId === b.levelId){
+                                    if (a.levelId === b.levelId) {
                                         return a.sequenceNumber - b.sequenceNumber
                                     }
                                     return a.levelId - b.levelId
@@ -105,7 +105,7 @@ const Lesson = () => {
                         button: false
                     }).then(r => r)
                 })
-                .finally(_=>{
+                .finally(_ => {
                     setLoading(false)
                 })
         }
@@ -140,6 +140,11 @@ const Lesson = () => {
                                                             style={{flex: '0 0 30%'}}>Kiểm tra
                                                     </button>
                                                 </div>
+                                                <p style={{fontSize:14}}>
+                                                    Bạn hãy nhập kết quả cho đoạn code trên vào ô kết quả, nếu kết quả
+                                                    có nhiều đáp án hãy cách nhau bằng dấu ",".
+                                                    Ví dụ: 2,1,3
+                                                </p>
                                             </div>
                                             <div>
                                                 {
