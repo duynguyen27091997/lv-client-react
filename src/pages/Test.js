@@ -57,38 +57,39 @@ const Test = () => {
                 buttons: true,
                 dangerMode: true,
             }).then(r => {
-                if (r)
+                if (r) {
                     setLoading(true);
-                AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
-                    .then(({data: res}) => {
-                        if (res.success) {
-                            setAssessment(res.data)
-                            setTest({...res.assessment, total: res.assessment.duration});
-                            setAssessmentAnswer(res.data.map((item, index) => {
-                                return {
-                                    index: index,
-                                    id: item.id,
-                                    kindChallengeId: item.kindChallengeId,
-                                    code: item.code,
-                                    answer: ''
-                                }
-                            }))
-                            window.scrollTo(0, 0);
-                        } else {
-                            swal({
-                                title: "Hiện tại chưa có đề thi nào !",
-                                icon: "error",
-                                buttons: false,
-                                timer: 1500
-                            }).then(r => r)
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-                    .finally(_ => {
-                        setLoading(false);
-                    })
+                    AxiosBe.get(`/api/assessment?courseId=${course.id}&userId=${user.id}`)
+                        .then(({data: res}) => {
+                            if (res.success) {
+                                setAssessment(res.data)
+                                setTest({...res.assessment, total: res.assessment.duration});
+                                setAssessmentAnswer(res.data.map((item, index) => {
+                                    return {
+                                        index: index,
+                                        id: item.id,
+                                        kindChallengeId: item.kindChallengeId,
+                                        code: item.code,
+                                        answer: ''
+                                    }
+                                }))
+                                window.scrollTo(0, 0);
+                            } else {
+                                swal({
+                                    title: "Hiện tại chưa có đề thi nào !",
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1500
+                                }).then(r => r)
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                        .finally(_ => {
+                            setLoading(false);
+                        })
+                }
             })
     }
     const submit = (payload) => {
